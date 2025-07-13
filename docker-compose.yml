@@ -16,3 +16,8 @@ services:
 
 volumes:
   pgdata:
+
+
+# To see the table locally
+# winpty docker exec -it receipt_tracker_db psql -U postgres -d receipts
+# then \dt to see the datatables
