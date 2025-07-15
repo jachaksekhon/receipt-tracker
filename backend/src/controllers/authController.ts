@@ -8,6 +8,9 @@ import dotenv from 'dotenv'
 const prisma = new PrismaClient();
 dotenv.config();
 
+const JWT_SECRET = process.env.JWT_SECRET as string;
+if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined");
+
 export const signup = async (req: Request, res: Response) => {
     const { firstname, lastname, email, password } = req.body;
 
@@ -26,7 +29,7 @@ export const signup = async (req: Request, res: Response) => {
                 firstname, 
                 lastname,
                 email, 
-                passsword: hashedPassword
+                password: hashedPassword
             },
         });
 
