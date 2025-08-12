@@ -1,15 +1,22 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const getUsers = async () => {
-  return await prisma.user.findMany();
+type NewUserInput = Pick<User, 'firstname' | 'lastname' | 'email' | 'password'>;
+
+const userService = {
+  getUsers: async () => {
+    return prisma.user.findMany();
+  },
+
+  createUser: async (data: NewUserInput) => {
+    return prisma.user.create({ data });
+  },
+
+  findUserByEmail: async (email: string) => {
+    return prisma.user.findUnique({ where: { email } });
+  }
 };
 
-export const createUser = async (data: any) => {
-    return await prisma.user.create({ data });
-}
+export default userService
 
-export const findUserByEmail = async (email: String) => {
-    return await prisma.user.findUnique({ where: { email }})
-}

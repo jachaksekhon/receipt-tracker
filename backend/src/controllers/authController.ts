@@ -1,36 +1,48 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
-import { createUser, findUserByEmail } from '../services/userService';
 import dotenv from 'dotenv'
 
-const prisma = new PrismaClient();
+import userService from '../services/userService';
+
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined");
 
 export const signup = async (req: Request, res: Response) => {
-    const { firstname, lastname, email, password } = req.body;
 
     try {
 
+        let { firstname, lastname, email, password } = req.body || {};
+
+        // Basic validation
+
+        if (!firstname || !lastname || !email || !password) {
+            return res.status(400).json({error: 'Missing required fields'});
+        }
+
+        // normalize inputs
+
+        email     = String(email).toLowerCase().trim();
+        firstname = firstname.trim();
+        lastname  = lastname.trim();
+
         // Check if email already exists
-        const existing = await prisma.user.findUnique({where: { email }});
+        const existing = await userService.findUserByEmail(email);
 
         if (existing) 
             return res.status(400).json({ error: 'An account with that email already exists!'});
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await createUser({
-            data: { 
-                firstname, 
-                lastname,
-                email, 
-                password: hashedPassword
-            },
+        const user = await userService.createUser({
+             
+            firstname, 
+            lastname,
+            email, 
+            password: hashedPassword
+            
         });
 
         res.status(201).json({
