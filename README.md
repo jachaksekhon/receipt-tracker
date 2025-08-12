@@ -17,7 +17,7 @@ A full-stack web app that will help users track Costco receipts and detect price
 
 ### Backend
 - Node.js + Express + TypeScript
-- PostgreSQL (via Docker) -> Production will host on EC2
+- PostgreSQL (via Docker) -> Production will host on EC2 + RDS
 - Prisma ORM
 - JWT Authentication
 
