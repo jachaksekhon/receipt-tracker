@@ -15,7 +15,7 @@ app.get('/ping', (req, res) => {
 })
 
 app.use('/users', userRoutes);
-app.use('/auth', authRoutes)
+app.use('/auth', authRoutes);
 
 // Start server
 const PORT = process.env.PORT || 4000;
