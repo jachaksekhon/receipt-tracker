@@ -65,7 +65,7 @@ export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     try {
-        const user = await findUserByEmail(email);
+        const user = await userService.findUserByEmail(email);
         if (!user) {
             return res.status(401).json({ error: "Email not found"});
         }
