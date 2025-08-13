@@ -1,16 +1,17 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom"
 import SignupStrings from "@/strings/SignupStrings";
 
 export default function SignUp() {
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.currentTarget;
+    const form     = e.currentTarget;
     const formData = new FormData(form);
 
-    const firstname = formData.get("firstname")
-    const lastname = formData.get("lastname")
-    const email = formData.get("email");
-    const password = formData.get("password");
+    const firstname       = formData.get("firstname")
+    const lastname        = formData.get("lastname")
+    const email           = formData.get("email");
+    const password        = formData.get("password");
     const confirmPassword = formData.get("confirmPassword");
 
     // TODO: validate & call backend
@@ -91,10 +92,23 @@ export default function SignUp() {
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            {SignupStrings.SubmitButton}
+          <Button 
+            type="submit" 
+            className="w-full">
+              {SignupStrings.SubmitButton}
           </Button>
+
         </form>
+        
+        <p className="mt-10 text-center text-sm/6 text-primary">
+            {SignupStrings.AlreadyAMember} 
+            <Link 
+              to='/login' 
+              className="font-semibold text-primary hover:text-[#fcda00] hover:underline ml-1">
+                {SignupStrings.Login}
+            </Link>
+        </p>
+        
       </div>
     </div>
   );
