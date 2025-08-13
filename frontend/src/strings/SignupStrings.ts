@@ -8,6 +8,8 @@ const SignupStrings = {
   PasswordLabel: "Password",
   ConfirmPasswordLabel: "Confirm Password",
   SubmitButton: "Sign Up",
+  AlreadyAMember: "Already a member?",
+  Login: "Login",
 };
 
 export default SignupStrings;
