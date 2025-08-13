@@ -3,7 +3,10 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import userService from '../services/userService';
-import { ResponseStrings } from '../strings/ResponseStrings';
+
+import { ResponseStrings } from '../constants/ResponseStrings';
+import { ResponseCodes } from '../constants/ResponseCodes';
+
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 if (!JWT_SECRET) throw new Error(ResponseStrings.JWTNotDefined);
@@ -15,7 +18,7 @@ export const signup = async (req: Request, res: Response) => {
         let { firstname, lastname, email, password } = req.body || {};
 
         if (!firstname || !lastname || !email || !password) {
-            return res.status(400).json({ error: ResponseStrings.MissingFields });
+            return res.status(ResponseCodes.BadRequest).json({ error: ResponseStrings.MissingFields });
         }
 
         email     = String(email).toLowerCase().trim();
@@ -25,7 +28,7 @@ export const signup = async (req: Request, res: Response) => {
         const existing = await userService.findUserByEmail(email);
 
         if (existing) 
-            return res.status(400).json({ error: ResponseStrings.DuplicateEmail });
+            return res.status(ResponseCodes.BadRequest).json({ error: ResponseStrings.DuplicateEmail });
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -38,7 +41,7 @@ export const signup = async (req: Request, res: Response) => {
             
         });
 
-        res.status(201).json({
+        res.status(ResponseCodes.ResourceCreated).json({
             message: ResponseStrings.UserSuccess,
             user: {
                 id: user.id,
@@ -51,7 +54,7 @@ export const signup = async (req: Request, res: Response) => {
         
     } catch (err) {
         console.error(ResponseStrings.SignupError, err);
-        res.status(500).json({ error: ResponseStrings.InternalError });
+        res.status(ResponseCodes.InternalServerError).json({ error: ResponseStrings.InternalError });
     }
 }
 
@@ -62,7 +65,7 @@ export const login = async (req: Request, res: Response) => {
         let { email, password } = req.body || {};
 
         if (!email || !password) {
-            return res.status(400).json({ error: ResponseStrings.MissingFields });
+            return res.status(ResponseCodes.BadRequest).json({ error: ResponseStrings.MissingFields });
         }
 
         email = String(email).toLowerCase().trim();
@@ -70,13 +73,13 @@ export const login = async (req: Request, res: Response) => {
         const user = await userService.findUserByEmail(email);
 
         if (!user) {
-            return res.status(401).json({ error: ResponseStrings.EmailNotFound });
+            return res.status(ResponseCodes.Unauthorized).json({ error: ResponseStrings.EmailNotFound });
         }
 
         const isValid = await bcrypt.compare(password, user.password);
 
         if (!isValid) {
-            return res.status(401).json({ error: ResponseStrings.WrongPass });
+            return res.status(ResponseCodes.Unauthorized).json({ error: ResponseStrings.WrongPass });
         }
 
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: ResponseStrings.KeyExpiry });
@@ -84,6 +87,6 @@ export const login = async (req: Request, res: Response) => {
         res.json({ message: ResponseStrings.LoginSuccess, token});
 
     } catch (err){
-        res.status(500).json({ error: ResponseStrings.LoginError })
+        res.status(ResponseCodes.InternalServerError).json({ error: ResponseStrings.InternalError })
     }
 }
