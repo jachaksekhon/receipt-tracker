@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom"
 import SignupStrings from "@/strings/SignupStrings";
+import { signup } from "../apis/auth/authService";
 
 export default function SignUp() {
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,7 +26,8 @@ export default function SignUp() {
       return;
     }
 
-    // TODO: validate & call backend
+    await signup({ firstname, lastname, email, password });
+
   };
 
   return (
