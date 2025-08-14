@@ -41,8 +41,11 @@ export const signup = async (req: Request, res: Response) => {
             
         });
 
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: ResponseStrings.KeyExpiry });
+
         res.status(ResponseCodes.ResourceCreated).json({
             message: ResponseStrings.UserSuccess,
+            token,
             user: {
                 id: user.id,
                 firstname: user.firstname,
