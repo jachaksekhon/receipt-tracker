@@ -4,15 +4,26 @@ import SignupStrings from "@/strings/SignupStrings";
 
 export default function SignUp() {
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
     const form     = e.currentTarget;
     const formData = new FormData(form);
 
-    const firstname       = formData.get("firstname")
-    const lastname        = formData.get("lastname")
-    const email           = formData.get("email");
-    const password        = formData.get("password");
-    const confirmPassword = formData.get("confirmPassword");
+    const firstname       = String(formData.get("firstname") || "").trim()
+    const lastname        = String(formData.get("lastname") || "").trim()
+    const email           = String(formData.get("email") || "").toLowerCase().trim();
+    const password        = String(formData.get("password") || "")
+    const confirmPassword = String(formData.get("confirmPassword") || "")
+
+    if (!firstname || !lastname || !email || !password){
+      alert(SignupStrings.RequiredFields);
+      return;
+    }
+
+    if (password != confirmPassword){
+      alert(SignupStrings.PasswordsNotSame);
+      return;
+    }
 
     // TODO: validate & call backend
   };

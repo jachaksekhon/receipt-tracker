@@ -10,6 +10,9 @@ const SignupStrings = {
   SubmitButton: "Sign Up",
   AlreadyAMember: "Already a member?",
   Login: "Login",
+
+  RequiredFields: "Please fill in all required fields",
+  PasswordsNotSame: "Passwords do not match"
 };
 
 export default SignupStrings;
