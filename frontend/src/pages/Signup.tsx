@@ -1,20 +1,52 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
+import { useState } from "react";
 import SignupStrings from "@/strings/SignupStrings";
+import { signup } from "../apis/auth/authService";
+import { AxiosError } from "axios";
 
 export default function SignUp() {
+  const navigate = useNavigate()
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
+    setErrorMsg(null);
+
     const form     = e.currentTarget;
     const formData = new FormData(form);
 
-    const firstname       = formData.get("firstname")
-    const lastname        = formData.get("lastname")
-    const email           = formData.get("email");
-    const password        = formData.get("password");
-    const confirmPassword = formData.get("confirmPassword");
+    const firstname       = String(formData.get("firstname") || "").trim()
+    const lastname        = String(formData.get("lastname") || "").trim()
+    const email           = String(formData.get("email") || "").toLowerCase().trim();
+    const password        = String(formData.get("password") || "")
+    const confirmPassword = String(formData.get("confirmPassword") || "")
 
-    // TODO: validate & call backend
+    if (!firstname || !lastname || !email || !password){
+      alert(SignupStrings.RequiredFields);
+      return;
+    }
+
+    if (password !== confirmPassword){
+      alert(SignupStrings.PasswordsNotSame);
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      await signup({ firstname, lastname, password, email })
+      navigate('/')
+    } 
+    catch (error) {
+      const err = error as AxiosError;
+      const msg = err?.message
+      setErrorMsg(msg)
+    } 
+    finally {
+      setSubmitting(false)
+    }
   };
 
   return (
@@ -94,8 +126,9 @@ export default function SignUp() {
 
           <Button 
             type="submit" 
-            className="w-full">
-              {SignupStrings.SubmitButton}
+            className="w-full"
+            disabled={submitting}>
+              {submitting ? SignupStrings.Submitting : SignupStrings.SubmitButton}
           </Button>
 
         </form>
