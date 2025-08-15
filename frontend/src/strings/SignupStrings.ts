@@ -8,6 +8,7 @@ const SignupStrings = {
   PasswordLabel: "Password",
   ConfirmPasswordLabel: "Confirm Password",
   SubmitButton: "Sign Up",
+  Submitting: "Submitting...",
   AlreadyAMember: "Already a member?",
   Login: "Login",
 

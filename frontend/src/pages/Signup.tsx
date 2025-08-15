@@ -1,12 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
+import { useState } from "react";
 import SignupStrings from "@/strings/SignupStrings";
 import { signup } from "../apis/auth/authService";
+import { AxiosError } from "axios";
 
 export default function SignUp() {
+  const navigate = useNavigate()
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
 
     e.preventDefault();
+    setErrorMsg(null);
+
     const form     = e.currentTarget;
     const formData = new FormData(form);
 
@@ -21,13 +29,24 @@ export default function SignUp() {
       return;
     }
 
-    if (password != confirmPassword){
+    if (password !== confirmPassword){
       alert(SignupStrings.PasswordsNotSame);
       return;
     }
 
-    await signup({ firstname, lastname, email, password });
-
+    try {
+      setSubmitting(true);
+      await signup({ firstname, lastname, password, email })
+      navigate('/')
+    } 
+    catch (error) {
+      const err = error as AxiosError;
+      const msg = err?.message
+      setErrorMsg(msg)
+    } 
+    finally {
+      setSubmitting(false)
+    }
   };
 
   return (
@@ -107,8 +126,9 @@ export default function SignUp() {
 
           <Button 
             type="submit" 
-            className="w-full">
-              {SignupStrings.SubmitButton}
+            className="w-full"
+            disabled={submitting}>
+              {submitting ? SignupStrings.Submitting : SignupStrings.SubmitButton}
           </Button>
 
         </form>
