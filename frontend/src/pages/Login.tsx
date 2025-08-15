@@ -1,17 +1,28 @@
 import { Button } from "@/components/ui/button";
 import LoginStrings from "@/strings/LoginStrings";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Login() {   
+export default function Login() {
+    
+    const navigate = useNavigate();
+    const [loggingIn, setLoggingIn] = useState(false)
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const form = e.currentTarget
-        const formData = new FormData(form)
-        const email = formData.get("email")
-        const password = formData.get("password")
+        const form     = e.currentTarget;
+        const formData = new FormData(form);
 
-        // implement backend connection here via fetch/axios
+        const email    = String(formData.get("email") || "").toLowerCase().trim();
+        const password = String(formData.get("password") || "");
+
+        if (!email || !password){
+            alert(LoginStrings.EnterEmailOrPassword);
+            return;
+        }
+
+        
     }
 
     return (
@@ -22,29 +33,54 @@ export default function Login() {
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form className="space-y-6" onSubmit={handleLogin}>
-                <div>
-                    <label className="block text-sm/6 font-medium text-primary font-sans">{LoginStrings.EmailLabel}</label>
-                    <div className="mt-2">
-                    <input type="email" name="email" id="email" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-                    </div>
-                </div>
+                <form 
+                    className="space-y-6" 
+                    onSubmit={handleLogin}>
 
-                <div>
-                    <div className="flex items-center justify-between">
-                    <label className="block text-sm/6 font-medium text-primary font-sans">{LoginStrings.PasswordLabel}</label>
-                    <div className="text-sm">
-                        <a href="#" className="font-semibold text-primary hover:text-[#fcda00] font-sans">{LoginStrings.ForgotPassword}</a>
+                    <div>
+                        <label 
+                            className="block text-sm/6 font-medium text-primary font-sans">
+                                {LoginStrings.EmailLabel}
+                        </label>
+                        <div className="mt-2">
+                            <input 
+                                type="email" 
+                                name="email" 
+                                id="email" 
+                                required 
+                                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                        </div>
                     </div>
-                    </div>
-                    <div className="mt-2">
-                    <input name="password" id="password" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-                    </div>
-                </div>
 
-                <div>
-                    <Button type="submit" className="w-full">{LoginStrings.SubmitButton}</Button>
-                </div>  
+                    <div>
+                        <div className="flex items-center justify-between">
+                            <label 
+                                className="block text-sm/6 font-medium text-primary font-sans">
+                                    {LoginStrings.PasswordLabel}
+                            </label>
+                            <div className="text-sm">
+                                <a href="#" className="font-semibold text-primary hover:text-[#fcda00] font-sans">{LoginStrings.ForgotPassword}</a>
+                            </div>
+                        </div>
+
+                        <div className="mt-2">
+                        <input 
+                            name="password" 
+                            id="password" 
+                            type="password"
+                            required 
+                            className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <Button 
+                            type="submit" 
+                            className="w-full"
+                            disabled={loggingIn}>
+                                {loggingIn ? LoginStrings.LoggingIn : LoginStrings.LoginButton}
+                        </Button>
+                    </div>  
                 </form>
 
                 <p className="mt-10 text-center text-sm/6 text-primary">

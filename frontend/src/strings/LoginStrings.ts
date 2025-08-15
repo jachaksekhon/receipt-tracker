@@ -3,9 +3,11 @@ const LoginStrings = {
   EmailLabel: "Email address",
   PasswordLabel: "Password",
   ForgotPassword: "Forgot password?",
-  SubmitButton: "Sign in",
+  LoginButton: "Login in",
+  LoggingIn: "Logging in...",
   NotAMember: "Not a member?",
-  SignUp: "Sign up"
+  SignUp: "Sign up",
+  EnterEmailOrPassword: "Enter a valid email or password"
 };
 
 export default LoginStrings;

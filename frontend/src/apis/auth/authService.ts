@@ -12,5 +12,13 @@ export const signup = async (data: { firstname: string; lastname: string; email:
     }
 };
 
-export const login = (data: { email: string, password: string }) => 
-    apiAuth.post("/login", data)
+export const login = async (data: { email: string, password: string }) => {
+    try {
+        const res = await apiAuth.post("/login", data);
+        return res.data
+    }
+    catch (error) {
+        const err = error as AxiosError;
+        throw err.response?.data
+    }
+}
