@@ -3,7 +3,7 @@ export const ResponseStrings = {
     MissingFields : "Missing required fields",
     DuplicateEmail: "An account with that e-mail already exists!",
     EmailNotFound: "Email not found",
-    WrongPass: "Incorrect password entered!",
+    WrongPass: "Incorrect password entered",
 
     LoginSuccess: "Login successful",
     UserSuccess: "User created successfully!",

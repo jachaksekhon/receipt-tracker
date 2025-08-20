@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom"
 import { useState } from "react";
-import SignupStrings from "@/strings/SignupStrings";
+import SignupStrings from "@/constants/strings/SignupStrings";
 import { signup } from "../apis/auth/authService";
 import { AxiosError } from "axios";
 
