@@ -22,6 +22,7 @@ export default function SignUp() {
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
 
       e.preventDefault();
+      setErrorMessage(null)
 
       const form     = e.currentTarget;
       const formData = new FormData(form);
