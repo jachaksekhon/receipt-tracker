@@ -3,7 +3,7 @@ const LoginStrings = {
   EmailLabel: "Email address",
   PasswordLabel: "Password",
   ForgotPassword: "Forgot password?",
-  LoginButton: "Login in",
+  LoginButton: "Login",
   LoggingIn: "Logging in...",
   NotAMember: "Not a member?",
   SignUp: "Sign up",
