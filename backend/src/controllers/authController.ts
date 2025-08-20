@@ -18,7 +18,7 @@ export const signup = async (req: Request, res: Response) => {
         let { firstname, lastname, email, password } = req.body || {};
 
         if (!firstname || !lastname || !email || !password) {
-            return res.status(ResponseCodes.BadRequest).json({ error: ResponseStrings.MissingFields });
+            return res.status(ResponseCodes.BadRequest).json({ error: ResponseStrings.MissingFields, message: ResponseStrings.MissingFields });
         }
 
         email     = String(email).toLowerCase().trim();
