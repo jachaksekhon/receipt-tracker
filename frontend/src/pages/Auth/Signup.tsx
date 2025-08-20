@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate, Link } from "react-router-dom"
 import { useState } from "react";
 import SignupStrings from "@/constants/strings/SignupStrings";
-import { signup } from "../apis/auth/authService";
+import { signup } from "../../apis/auth/authService";
 import IntConstants from "@/constants/ints/IntConstants";
 import { InputError, BannerError } from "@/components/ErrorUI";
 
