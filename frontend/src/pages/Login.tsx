@@ -10,7 +10,7 @@ import IntConstants from "@/constants/ints/IntConstants";
 
 function getAxiosErrorMessage(err: unknown) {
   const ax = err as AxiosError<{ error?: string; message?: string }>;
-  return ax?.response?.data?.error || ax?.response?.data?.message || ax?.message || "Login failed.";
+  return ax?.response?.data?.error || ax?.response?.data?.message || ax?.message || LoginStrings.LoginFailed;
 }
 
 export default function Login() {
@@ -18,9 +18,9 @@ export default function Login() {
     const navigate = useNavigate();
     const [loggingIn, setLoggingIn] = useState(false);
     
-    const [errorMsg, setErrorMessage] = useState<string | null>("Internal server error");
-    const [emailError, setEmailError] = useState<string | null>("Email not found");
-    const [passwordError, setPasswordError] = useState<string | null>("Password does not match backend");
+    const [errorMsg, setErrorMessage] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
 
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,9 +59,7 @@ export default function Login() {
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <img className="mx-auto h-10 w-auto" src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
                 <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900 pb-2">{LoginStrings.Title}</h2>
-
                 <BannerError message={errorMsg}/>
-
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -95,7 +93,11 @@ export default function Login() {
                                         {LoginStrings.PasswordLabel}
                                 </label>
                                 <div className="text-sm">
-                                    <a href="#" className="font-semibold text-primary hover:text-[#fcda00] font-sans">{LoginStrings.ForgotPassword}</a>
+                                    <Link 
+                                        to='/forgotpassword' 
+                                        className="font-semibold text-primary hover:text-[#fcda00] hover:underline ml-1">
+                                            {LoginStrings.ForgotPassword}
+                                    </Link>
                                 </div>
                             </div>
 
@@ -125,7 +127,11 @@ export default function Login() {
 
                 <p className="mt-10 text-center text-sm/6 text-primary">
                     {LoginStrings.NotAMember} 
-                <a href="#" className="font-semibold text-primary hover:text-[#fcda00] hover:underline ml-1">{LoginStrings.SignUp}</a>
+                    <Link 
+                        to='/signup' 
+                        className="font-semibold text-primary hover:text-[#fcda00] hover:underline ml-1">
+                            {LoginStrings.SignUp}
+                    </Link>
                 </p>
             </div>
         </div>

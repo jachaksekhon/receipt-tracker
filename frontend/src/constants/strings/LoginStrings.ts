@@ -9,6 +9,7 @@ const LoginStrings = {
   SignUp: "Sign up",
   EnterEmailOrPassword: "Enter a valid email or password",
 
+  LoginFailed: "Login failed",
   backendEmailErrorKey: "Email not found",
   backendPasswordErrorKey: "Incorrect password entered",
   Error: "Error:",
