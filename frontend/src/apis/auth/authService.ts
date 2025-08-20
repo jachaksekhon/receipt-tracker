@@ -11,7 +11,7 @@ export const signup = async (data: { firstname: string; lastname: string; email:
         throw err.response?.data
     }
 };
-
+    
 export const login = async (data: { email: string, password: string }) => {
     try {
         const res = await apiAuth.post("/login", data);

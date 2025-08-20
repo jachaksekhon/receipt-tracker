@@ -1,5 +1,4 @@
 import { useState } from "react";
-import type { AxiosError } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -9,8 +8,8 @@ import { BannerError, InputError } from "@/components/ErrorUI";
 import IntConstants from "@/constants/ints/IntConstants";
 
 function getAxiosErrorMessage(err: unknown) {
-  const ax = err as AxiosError<{ error?: string; message?: string }>;
-  return ax?.response?.data?.error || ax?.response?.data?.message || ax?.message || LoginStrings.LoginFailed;
+  const data = err as { error?: string; message?: string };
+  return data?.error || data?.message || LoginStrings.LoginFailed;
 }
 
 export default function Login() {
