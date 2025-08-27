@@ -87,7 +87,13 @@ export const login = async (req: Request, res: Response) => {
 
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: ResponseStrings.KeyExpiry });
 
-        res.json({ message: ResponseStrings.LoginSuccess, token});
+        res.json(
+            { 
+                message: ResponseStrings.LoginSuccess, 
+                token,
+                user: {id: user.id, email: user.email, name: user.firstname}
+            }
+        );
 
     } catch (err){
         res.status(ResponseCodes.InternalServerError).json({ error: ResponseStrings.InternalError })

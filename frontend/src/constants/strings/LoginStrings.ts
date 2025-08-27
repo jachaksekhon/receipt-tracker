@@ -5,6 +5,7 @@ const LoginStrings = {
   ForgotPassword: "Forgot password?",
   LoginButton: "Login",
   LoggingIn: "Logging in...",
+  Logout: "Logout",
   NotAMember: "Not a member?",
   SignUp: "Sign up",
   EnterEmailOrPassword: "Enter a valid email or password",
