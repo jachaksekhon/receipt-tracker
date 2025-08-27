@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/auth/useAuth";
 
 import { Button } from "@/components/ui/button";
 import LoginStrings from "@/constants/strings/LoginStrings";
@@ -21,6 +22,8 @@ export default function Login() {
     const [emailError, setEmailError] = useState<string | null>(null);
     const [passwordError, setPasswordError] = useState<string | null>(null);
 
+    const { frontEndlogin } = useAuth();
+
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -37,8 +40,8 @@ export default function Login() {
         }
 
         try {
-            const { token } = await login({ email, password });
-            localStorage.setItem("JWT_TOKEN", token);
+            const { token, user } = await login({ email, password });
+            frontEndlogin(token, user);
             navigate("/");
         }
         catch (err) {
