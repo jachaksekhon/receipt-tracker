@@ -38,8 +38,8 @@ This project is tracked using **Jira** for task management, sprint planning, and
 - **Epics** are used for major features (Authentication, Receipt Processing, Notifications).  
 - **Stories** break features into smaller tasks for incremental progress.
 
-<img width="1418" height="844" alt="image" src="https://github.com/user-attachments/assets/d6689d96-8ef1-472b-8c39-f04135c6a3bf" />
-<img width="1694" height="896" alt="image" src="https://github.com/user-attachments/assets/ee701a3f-4658-4b38-ba7b-f24936ca7234" />
+<img width="1381" height="910" alt="image" src="https://github.com/user-attachments/assets/170500bf-b6b1-457b-bf82-8edbbfa6e0b2" />
+<img width="1729" height="842" alt="image" src="https://github.com/user-attachments/assets/b05b1322-1a6f-4a59-bccb-38dbfe77619c" />
 
 
 ---
