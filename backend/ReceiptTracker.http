@@ -1,0 +1,6 @@
+@ReceiptTracker_HostAddress = http://localhost:5293
+
+GET {{ReceiptTracker_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
