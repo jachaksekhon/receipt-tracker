@@ -56,6 +56,60 @@ public class AuthService : IAuthService
         return CreateToken(user);
     }
 
+    public async Task<string> ForgotPasswordAsync(ForgotPasswordDto dto)
+    {
+        var user = await _userRepository.FindByEmailAsync(dto.Email);
+        if (user == null)
+            throw new Exception("User not found.");
+
+        // TODO: Improve RNG, make a secure random string
+        var tokenBytes = RandomNumberGenerator.GetBytes(32);
+        var token = Convert.ToBase64String(tokenBytes);
+
+        user.ResetPasswordToken = token;
+        user.ResetTokenExpires = DateTime.UtcNow.AddMinutes(15);
+
+        await _userRepository.UpdateAsync(user);
+
+        ////////// **************** TODO: ADD IN EMAIL MESSAGE WITH TOKEN FOR USERS SO THEY CAN RESET PASSWORD **************** //////////
+        Console.WriteLine($"Password reset token for {user.Email}: {token}");
+
+        return token;
+    }
+
+    public async Task ResetPasswordAsync(ResetPasswordDto dto)
+    {
+        var user = (await _userRepository.GetAllAsync())
+            .FirstOrDefault(u => u.ResetPasswordToken == dto.Token && u.ResetTokenExpires > DateTime.UtcNow);
+
+        if (user == null)
+            throw new Exception("Invalid or expired reset token.");
+
+        CreatePasswordHash(dto.NewPassword, out byte[] hash, out byte[] salt);
+        user.PasswordHash = hash;
+        user.PasswordSalt = salt;
+        user.ResetPasswordToken = null;
+        user.ResetTokenExpires = null;
+
+        await _userRepository.UpdateAsync(user);
+    }
+
+    public async Task ChangePasswordAsync(int userId, ChangePasswordDto dto)
+    {
+        var user = await _userRepository.FindByIdAsync(userId);
+        if (user == null)
+            throw new Exception("User not found.");
+
+        if (!VerifyPasswordHash(dto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
+            throw new Exception("Current password is incorrect.");
+
+        CreatePasswordHash(dto.NewPassword, out byte[] newHash, out byte[] newSalt);
+        user.PasswordHash = newHash;
+        user.PasswordSalt = newSalt;
+
+        await _userRepository.UpdateAsync(user);
+    }
+
     // *** HELPER METHODS ***
 
     private void CreatePasswordHash(string password, out byte[] hash, out byte[] salt)

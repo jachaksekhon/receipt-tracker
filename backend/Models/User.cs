@@ -18,5 +18,6 @@ public class User
     [Required]
     public byte[] PasswordSalt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
+    public string? ResetPasswordToken { get; set; }
+    public DateTime? ResetTokenExpires { get; set; }
 }

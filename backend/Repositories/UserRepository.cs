@@ -30,9 +30,15 @@ public class UserRepository : IUserRepository
             return null;
         }
 
-        currentUserInDb.FirstName = user.FirstName;
-        currentUserInDb.LastName  = user.LastName;
-        currentUserInDb.Email     = user.Email;
+        currentUserInDb.FirstName    = user.FirstName;
+        currentUserInDb.LastName     = user.LastName;
+        currentUserInDb.Email        = user.Email;
+
+        if (user.PasswordHash != null && user.PasswordSalt != null)
+        {
+            currentUserInDb.PasswordHash = user.PasswordHash;
+            currentUserInDb.PasswordSalt = user.PasswordSalt;
+        }
 
         await _context.SaveChangesAsync();
         return currentUserInDb;

@@ -12,8 +12,8 @@ using ReceiptTracker.Data;
 namespace ReceiptTracker.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251028032750_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251029032458_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,9 +48,19 @@ namespace ReceiptTracker.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("PasswordHash")
                         .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("ResetPasswordToken")
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResetTokenExpires")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 

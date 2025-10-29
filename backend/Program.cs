@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReceiptTracker.Data;
 using ReceiptTracker.Repositories;
+using ReceiptTracker.Services.Auth;
 using ReceiptTracker.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ builder.Services.AddControllers();
 // Dependency injection for repositories & services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add CORS (optional, useful for frontend testing)
 builder.Services.AddCors(options =>
