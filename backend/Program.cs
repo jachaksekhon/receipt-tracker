@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add EF Core + PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddAutoMapper(typeof(Program));
+
 
 // Add controllers
 builder.Services.AddControllers();

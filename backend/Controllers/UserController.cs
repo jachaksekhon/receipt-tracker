@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ReceiptTracker.DTOs.Users;
 using ReceiptTracker.Models;
 using ReceiptTracker.Services.Users;
@@ -11,10 +12,12 @@ namespace ReceiptTracker.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IMapper _mapper;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IMapper mapper)
     {
         _userService = userService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -35,14 +38,7 @@ public class UserController : ControllerBase
         if (user == null)
             return NotFound($"No user found with the email '{email}'");
 
-        var userDto = new UserReadDto
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = email,
-            CreatedAt = user.CreatedAt
-        };
+        var userDto = _mapper.Map<UserReadDto>(user);
 
         return Ok(userDto);
     }
@@ -58,42 +54,9 @@ public class UserController : ControllerBase
         if (user == null)
             return NotFound($"No user found with the id '{id}'");
 
-        var userDto = new UserReadDto
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            CreatedAt = user.CreatedAt
-        };
+        var userDto = _mapper.Map<UserReadDto>(user);
 
         return Ok(userDto);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<User>> CreateUser([FromBody] UserCreateDto dto)
-    {
-        var user = new User
-        {
-            FirstName = dto.FirstName,
-            LastName  = dto.LastName,
-            Email     = dto.Email,
-            Password  = dto.Password,
-        };
-
-        var createdUser = await _userService.CreateUserAsync(user);
-
-        var readDto = new UserReadDto
-        {
-            Id        = createdUser.Id,
-            FirstName = createdUser.FirstName,
-            LastName  = createdUser.LastName,
-            Email     = createdUser.Email,
-            CreatedAt = createdUser.CreatedAt
-        };
-
-        return Ok(new { id = createdUser.Id });
-
     }
 
     [HttpDelete("{id}")]

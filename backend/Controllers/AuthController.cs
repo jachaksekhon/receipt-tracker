@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReceiptTracker.DTOs.Auth;
 using ReceiptTracker.DTOs.Users;
@@ -12,10 +13,12 @@ namespace ReceiptTracker.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
+    private readonly IMapper _mapper;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService, IMapper mapper)
     {
         _authService = authService;
+        _mapper = mapper;
     }
 
     [HttpPost("register")]
@@ -28,14 +31,7 @@ public class AuthController : ControllerBase
         {
             var user = await _authService.RegisterAsync(request);
 
-            var response = new UserReadDto
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                CreatedAt = user.CreatedAt,
-            };
+            var response = _mapper.Map<UserReadDto>(user);
 
             return Ok(response);
         }
