@@ -14,7 +14,7 @@ public class User
     [Required]
     public string Email { get; set; } = string.Empty;
     [Required]
-    public byte[] Password { get; set; }
+    public byte[] PasswordHash { get; set; }
     [Required]
     public byte[] PasswordSalt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

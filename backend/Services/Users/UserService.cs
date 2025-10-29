@@ -1,7 +1,7 @@
 ﻿using ReceiptTracker.Models;
 using ReceiptTracker.Repositories;
 
-namespace ReceiptTracker.Services;
+namespace ReceiptTracker.Services.Users;
 
 public class UserService : IUserService
 {
@@ -10,22 +10,6 @@ public class UserService : IUserService
     public UserService(IUserRepository userRepository)
     {
         _userRepository = userRepository;
-    }
-
-    public async Task<User> CreateUserAsync(User user)
-    {
-        if (user == null) 
-            throw new ArgumentNullException(nameof(user));
-
-        if (string.IsNullOrWhiteSpace(user.Email))
-            throw new ArgumentException("Email is required.", nameof(user));
-
-        var existingUser = await _userRepository.FindByEmailAsync(user.Email);
-
-        if(existingUser != null)
-            throw new InvalidOperationException($"User with email {user.Email} already exists.");
-
-        return await _userRepository.CreateAsync(user);
     }
 
     public async Task<IReadOnlyList<User>> GetAllUsersAsync()

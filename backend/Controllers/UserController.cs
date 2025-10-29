@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ReceiptTracker.DTOs.Users;
 using ReceiptTracker.Models;
-using ReceiptTracker.Services;
+using ReceiptTracker.Services.Users;
 using System.Reflection.Metadata.Ecma335;
 
 namespace ReceiptTracker.Controllers;
