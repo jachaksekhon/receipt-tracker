@@ -33,13 +33,33 @@ public class UserService : IUserService
         return await _userRepository.GetAllAsync();
     }
 
-    public async Task<User> FindByEmailAsync(string email)
+    public async Task<User?> FindByEmailAsync(string email)
     {
         var user = await _userRepository.FindByEmailAsync(email);
 
         if (user == null)
-            throw new Exception($"User with email {email} does not exist");
+            throw new Exception($"User with email '{email}' does not exist");
 
         return user;
+    }
+
+    public async Task<User?> FindByIdAsync(int id)
+    {
+        var user = await _userRepository.FindByIdAsync(id);
+
+        if (user == null)
+            throw new Exception($"User with id '{id}' does not exist");
+
+        return user;
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var user = await _userRepository.FindByIdAsync(id);
+
+        if (user == null)
+            throw new Exception($"User with id '{id}' does not exist");
+
+        return await _userRepository.DeleteAsync(id);
     }
 }

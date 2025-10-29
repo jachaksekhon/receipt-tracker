@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ReceiptTracker.Data;
+using ReceiptTracker.Repositories;
+using ReceiptTracker.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +12,24 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add controllers
 builder.Services.AddControllers();
 
-// Add JWT / authentication setup will come soon
+// Dependency injection for repositories & services
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
+// Add CORS (optional, useful for frontend testing)
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowAnyOrigin();
+    });
+});
+
+// Authentication setup will come soon (JWT)
 var app = builder.Build();
 
-app.UseCors(p => p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseCors();
 app.MapControllers();
 app.Run();
