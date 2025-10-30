@@ -1,6 +1,5 @@
-﻿namespace ReceiptTracker.Repositories.ReceiptItems
+﻿namespace ReceiptTracker.Repositories.ReceiptItems;
+
+public interface IReceiptItemRepository
 {
-    public interface IReceiptItemRepository
-    {
-    }
 }

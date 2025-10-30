@@ -65,5 +65,4 @@ public class ReceiptRepository : IReceiptRepository
         await _context.SaveChangesAsync();
         return existing;
     }
-
 }
