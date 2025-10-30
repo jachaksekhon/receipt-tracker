@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using ReceiptTracker.Data;
 using ReceiptTracker.DTOs.Auth;
 using ReceiptTracker.Models;
-using ReceiptTracker.Repositories;
+using ReceiptTracker.Repositories.Users;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;

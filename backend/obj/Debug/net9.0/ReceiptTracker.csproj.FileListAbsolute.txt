@@ -139,4 +139,3 @@ H:\Downloads\Projects\receipt-tracker\backend\bin\Debug\net9.0\zh-Hans\Microsoft
 H:\Downloads\Projects\receipt-tracker\backend\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 H:\Downloads\Projects\receipt-tracker\backend\bin\Debug\net9.0\AutoMapper.dll
 H:\Downloads\Projects\receipt-tracker\backend\bin\Debug\net9.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
-H:\Downloads\Projects\receipt-tracker\backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

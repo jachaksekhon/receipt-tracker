@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ReceiptTracker.Data;
-using ReceiptTracker.Repositories;
+using ReceiptTracker.Repositories.Users;
 using ReceiptTracker.Services.Auth;
 using ReceiptTracker.Services.Users;
 

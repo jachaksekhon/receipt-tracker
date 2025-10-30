@@ -1,6 +1,6 @@
 ﻿using ReceiptTracker.Models;
 
-namespace ReceiptTracker.Repositories;
+namespace ReceiptTracker.Repositories.Users;
 
 public interface IUserRepository
 {

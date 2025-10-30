@@ -1,5 +1,5 @@
 ﻿using ReceiptTracker.Models;
-using ReceiptTracker.Repositories;
+using ReceiptTracker.Repositories.Users;
 
 namespace ReceiptTracker.Services.Users;
 

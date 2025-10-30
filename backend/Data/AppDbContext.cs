@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReceiptTracker.Models;
+using ReceiptTracker.Models.Receipts;
 
 namespace ReceiptTracker.Data;
 

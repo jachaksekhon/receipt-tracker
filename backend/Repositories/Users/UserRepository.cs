@@ -3,7 +3,7 @@ using ReceiptTracker.Models;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 
-namespace ReceiptTracker.Repositories;
+namespace ReceiptTracker.Repositories.Users;
 
 public class UserRepository : IUserRepository
 {
