@@ -10,4 +10,7 @@ public class AppDbContext : DbContext
 
     // tables
     public DbSet<User> Users => Set<User>();
+    public DbSet<Receipt> Receipts => Set<Receipt>();
+    public DbSet<ReceiptItem> ReceiptItems => Set<ReceiptItem>();
+
 }

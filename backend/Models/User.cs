@@ -20,4 +20,5 @@ public class User
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string? ResetPasswordToken { get; set; }
     public DateTime? ResetTokenExpires { get; set; }
+    public List<Receipt> Receipts { get; set; } = new();
 }
