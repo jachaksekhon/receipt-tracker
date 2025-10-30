@@ -5,9 +5,9 @@ namespace ReceiptTracker.Repositories.Receipts;
 
 public interface IReceiptRepository
 {
-    Task<User> CreateAsync(Receipt receipt);
-    Task<User?> UpdateAsync(Receipt receipt);
-    Task<bool> DeleteAsync(int id);
-    Task<User?> FindByIdAsync(int id);
-    Task<IReadOnlyList<User>> GetAllAsync();
+    Task<Receipt> CreateAsync(Receipt receipt);
+    Task<Receipt?> FindByIdAsync(int id, int userId);
+    Task<IReadOnlyList<Receipt>> GetAllByUserAsync(int userId);
+    Task<bool> DeleteAsync(int id, int userId);
+    Task<Receipt?> UpdateAsync(Receipt receipt);
 }
