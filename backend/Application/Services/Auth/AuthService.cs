@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
+using ReceiptTracker.Application.Constants;
 using ReceiptTracker.Application.DTOs.Auth;
 using ReceiptTracker.Application.DTOs.Users;
 using ReceiptTracker.Domain.Models;
@@ -29,7 +30,7 @@ public class AuthService : IAuthService
         var existingUser = await _userRepository.FindByEmailAsync(request.Email);
 
         if (existingUser != null) 
-            throw new Exception("User with this email already exists");
+            throw new Exception(ErrorMessages.UserAlreadyExists);
 
         CreatePasswordHash(request.Password, out byte[] hash, out byte[] salt);
 
@@ -53,10 +54,10 @@ public class AuthService : IAuthService
     {
         var user = await _userRepository.FindByEmailAsync(request.Email);
         if (user == null)
-            throw new Exception("User not found.");
+            throw new Exception(ErrorMessages.UserNotFoundByEmail(request.Email));
 
         if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-            throw new Exception("Invalid password.");
+            throw new Exception(ErrorMessages.InvalidPassword);
 
         return CreateToken(user);
     }
@@ -65,7 +66,7 @@ public class AuthService : IAuthService
     {
         var user = await _userRepository.FindByEmailAsync(dto.Email);
         if (user == null)
-            throw new Exception("User not found.");
+            throw new Exception(ErrorMessages.UserNotFoundByEmail(dto.Email));
 
         // TODO: Improve RNG, make a secure random string
         var tokenBytes = RandomNumberGenerator.GetBytes(32);
@@ -88,7 +89,7 @@ public class AuthService : IAuthService
             .FirstOrDefault(u => u.ResetPasswordToken == dto.Token && u.ResetTokenExpires > DateTime.UtcNow);
 
         if (user == null)
-            throw new Exception("Invalid or expired reset token.");
+            throw new Exception(ErrorMessages.InvalidToken);
 
         CreatePasswordHash(dto.NewPassword, out byte[] hash, out byte[] salt);
         user.PasswordHash = hash;
@@ -103,10 +104,10 @@ public class AuthService : IAuthService
     {
         var user = await _userRepository.FindByIdAsync(userId);
         if (user == null)
-            throw new Exception("User not found.");
+            throw new Exception(ErrorMessages.UserNotFoundbyId(userId));
 
         if (!VerifyPasswordHash(dto.CurrentPassword, user.PasswordHash, user.PasswordSalt))
-            throw new Exception("Current password is incorrect.");
+            throw new Exception(ErrorMessages.InvalidPassword);
 
         CreatePasswordHash(dto.NewPassword, out byte[] newHash, out byte[] newSalt);
         user.PasswordHash = newHash;

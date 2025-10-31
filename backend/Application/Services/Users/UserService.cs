@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ReceiptTracker.Application.Constants;
 using ReceiptTracker.Application.DTOs.Users;
 using ReceiptTracker.Domain.Models;
 using ReceiptTracker.Infrastructure.Repositories.Users;
@@ -27,7 +28,7 @@ public class UserService : IUserService
         var user = await _userRepository.FindByEmailAsync(email);
 
         if (user == null)
-            throw new Exception($"User with email '{email}' does not exist");
+            throw new Exception(ErrorMessages.UserNotFoundByEmail(email));
 
         var userReadDto = _mapper.Map<UserReadDto>(user);
 
@@ -39,7 +40,7 @@ public class UserService : IUserService
         var user = await _userRepository.FindByIdAsync(id);
 
         if (user == null)
-            throw new Exception($"User with id '{id}' does not exist");
+            throw new Exception(ErrorMessages.UserNotFoundbyId(id));
 
         var userReadDto = _mapper.Map<UserReadDto>(user);
 
@@ -51,7 +52,7 @@ public class UserService : IUserService
         var user = await _userRepository.FindByIdAsync(id);
 
         if (user == null)
-            throw new Exception($"User with id '{id}' does not exist");
+            throw new Exception(ErrorMessages.UserNotFoundbyId(id));
 
         return await _userRepository.DeleteAsync(id);
     }

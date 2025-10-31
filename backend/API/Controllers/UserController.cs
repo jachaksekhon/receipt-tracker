@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using ReceiptTracker.Application.Constants;
 using ReceiptTracker.Application.DTOs.Users;
 using ReceiptTracker.Application.Services.Users;
 using ReceiptTracker.Domain.Models;
