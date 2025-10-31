@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using ReceiptTracker.Application.Services.Auth;
+using ReceiptTracker.Application.Services.Receipts;
+using ReceiptTracker.Application.Services.Users;
 using ReceiptTracker.Data;
 using ReceiptTracker.Repositories.Receipts;
 using ReceiptTracker.Repositories.Users;
-using ReceiptTracker.Services.Auth;
-using ReceiptTracker.Services.Receipts;
-using ReceiptTracker.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
