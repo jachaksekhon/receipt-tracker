@@ -1,6 +1,4 @@
 ﻿using ReceiptTracker.Domain.Models.Receipts;
-using ReceiptTracker.Models;
-
 namespace ReceiptTracker.Infrastructure.Repositories.Receipts;
 
 public interface IReceiptRepository

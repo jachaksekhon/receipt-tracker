@@ -46,14 +46,24 @@ public class ReceiptService : IReceiptService
             Status = Receipt.ReceiptStatus.Uploaded,
         };
 
-        await _receiptRepository.CreateAsync(receipt);
+        try
+        {
+            await _receiptRepository.CreateAsync(receipt);
+        }
+        catch (Exception ex)
+        {
+            var fullPath = Path.Combine(_env.WebRootPath, imageUrl.TrimStart('/'));
+            if (File.Exists(fullPath))
+                File.Delete(fullPath);
+
+            throw new Exception("Database operation failed when creating receipt.", ex);
+        }
 
         return _mapper.Map<ReceiptReadDto>(receipt);
     }
-
-    Task<ReceiptReadDto> ProcessReceiptAsync(int receiptID)
+    public async Task<ReceiptReadDto> ProcessReceiptAsync(int receiptID)
     {
-
+        throw new NotImplementedException();
     }
     public async Task<ReceiptReadDto> ProcessReceiptAsync(ReceiptUploadDto uploadDto, int userId)
     {
