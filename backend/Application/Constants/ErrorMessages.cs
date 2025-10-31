@@ -5,6 +5,7 @@ public static class ErrorMessages
     // Common Validation Errors
     public const string InvalidId = "Id must be a positive integer.";
     public const string InvalidEmail = "Email cannot be empty.";
+    public const string InvalidEmailFormat = "Invalid email format.";
     public const string InvalidFile = "Invalid or missing file.";
     public const string InvalidToken = "Invalid or expired reset token";
     public const string InvalidPassword = "Password does not match our records.";

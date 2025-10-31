@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ReceiptTracker.Application.Constants;
 using ReceiptTracker.Application.DTOs.Users;
+using ReceiptTracker.Application.Helpers;
 using ReceiptTracker.Domain.Models;
 using ReceiptTracker.Infrastructure.Repositories.Users;
 
@@ -25,7 +26,7 @@ public class UserService : IUserService
 
     public async Task<UserReadDto?> FindByEmailAsync(string email)
     {
-        var user = await _userRepository.FindByEmailAsync(email);
+        var user = await _userRepository.FindByEmailAsync(InputSanitizer.NormalizeEmail(email));
 
         if (user == null)
             throw new Exception(ErrorMessages.UserNotFoundByEmail(email));

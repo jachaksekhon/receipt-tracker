@@ -23,8 +23,6 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<UserReadDto>> Register([FromBody] UserRegisterDto request)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         try
         {

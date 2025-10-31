@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using ReceiptTracker.Application.Constants;
 using ReceiptTracker.Application.DTOs.Auth;
 using ReceiptTracker.Application.DTOs.Users;
+using ReceiptTracker.Application.Helpers;
 using ReceiptTracker.Domain.Models;
 using ReceiptTracker.Infrastructure.Repositories.Users;
 using System.IdentityModel.Tokens.Jwt;
@@ -27,7 +28,9 @@ public class AuthService : IAuthService
 
     public async Task<UserReadDto> RegisterAsync(UserRegisterDto request)
     {
-        var existingUser = await _userRepository.FindByEmailAsync(request.Email);
+        var normalizedEmail = InputSanitizer.NormalizeEmail(request.Email);
+
+        var existingUser = await _userRepository.FindByEmailAsync(normalizedEmail);
 
         if (existingUser != null) 
             throw new Exception(ErrorMessages.UserAlreadyExists);
@@ -38,7 +41,7 @@ public class AuthService : IAuthService
         {
             FirstName    = request.FirstName,
             LastName     = request.LastName,
-            Email        = request.Email,
+            Email        = normalizedEmail,
             PasswordHash = hash,
             PasswordSalt = salt
         };
@@ -52,9 +55,11 @@ public class AuthService : IAuthService
 
     public async Task<string> LoginAsync(UserLoginDto request)
     {
-        var user = await _userRepository.FindByEmailAsync(request.Email);
+        var normalizedEmail = InputSanitizer.NormalizeEmail(request.Email);
+
+        var user = await _userRepository.FindByEmailAsync(normalizedEmail);
         if (user == null)
-            throw new Exception(ErrorMessages.UserNotFoundByEmail(request.Email));
+            throw new Exception(ErrorMessages.UserNotFoundByEmail(normalizedEmail));
 
         if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             throw new Exception(ErrorMessages.InvalidPassword);
@@ -64,9 +69,11 @@ public class AuthService : IAuthService
 
     public async Task<string> ForgotPasswordAsync(ForgotPasswordDto dto)
     {
-        var user = await _userRepository.FindByEmailAsync(dto.Email);
+        var normalizedEmail = InputSanitizer.NormalizeEmail(dto.Email);
+
+        var user = await _userRepository.FindByEmailAsync(normalizedEmail);
         if (user == null)
-            throw new Exception(ErrorMessages.UserNotFoundByEmail(dto.Email));
+            throw new Exception(ErrorMessages.UserNotFoundByEmail(normalizedEmail));
 
         // TODO: Improve RNG, make a secure random string
         var tokenBytes = RandomNumberGenerator.GetBytes(32);
@@ -134,10 +141,12 @@ public class AuthService : IAuthService
 
     private string CreateToken(User user)
     {
+        var normalizedEmail = InputSanitizer.NormalizeEmail(user.Email);
+
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Email, normalizedEmail),
             new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}")
         };
 
