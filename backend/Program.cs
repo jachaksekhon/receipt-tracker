@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using ReceiptTracker.Data;
+using ReceiptTracker.Repositories.Receipts;
 using ReceiptTracker.Repositories.Users;
 using ReceiptTracker.Services.Auth;
+using ReceiptTracker.Services.Receipts;
 using ReceiptTracker.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,8 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
+builder.Services.AddScoped<IReceiptService, ReceiptService>();
 
 // Add CORS (optional, useful for frontend testing)
 builder.Services.AddCors(options =>
@@ -35,5 +39,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors();
+app.UseStaticFiles();
 app.MapControllers();
 app.Run();

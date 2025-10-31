@@ -1,6 +1,6 @@
-﻿namespace ReceiptTracker.Services.Parsers;
+﻿//namespace ReceiptTracker.Services.Parsers;
 
-public class CostcoReceiptParser : IReceiptParser
-{
+//public class CostcoReceiptParser : IReceiptParser
+//{
 
-}
+//}
