@@ -28,7 +28,7 @@ public class AuthController : ControllerBase
 
         try
         {
-            var user = await _authService.RegisterAsync(request);
+            UserReadDto user = await _authService.RegisterAsync(request);
 
             return Ok(user);
         }

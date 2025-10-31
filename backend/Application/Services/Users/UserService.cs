@@ -16,9 +16,10 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyList<User>> GetAllUsersAsync()
+    public async Task<IReadOnlyList<UserReadDto>> GetAllUsersAsync()
     {
-        return await _userRepository.GetAllAsync();
+        var users = await _userRepository.GetAllAsync();
+        return _mapper.Map<IReadOnlyList<UserReadDto>>(users);
     }
 
     public async Task<UserReadDto?> FindByEmailAsync(string email)

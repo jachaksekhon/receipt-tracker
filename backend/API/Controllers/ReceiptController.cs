@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ReceiptTracker.Application.Services.Receipts;
-using ReceiptTracker.DTOs.Receipts;
 
-namespace ReceiptTracker.API.Controllers.Receipts;
+namespace ReceiptTracker.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

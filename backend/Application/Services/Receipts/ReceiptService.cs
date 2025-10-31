@@ -48,7 +48,12 @@ public class ReceiptService : IReceiptService
 
         await _receiptRepository.CreateAsync(receipt);
 
-        return _mapper.Map(receipt);
+        return _mapper.Map<ReceiptReadDto>(receipt);
+    }
+
+    Task<ReceiptReadDto> ProcessReceiptAsync(int receiptID)
+    {
+
     }
     public async Task<ReceiptReadDto> ProcessReceiptAsync(ReceiptUploadDto uploadDto, int userId)
     {
@@ -60,7 +65,7 @@ public class ReceiptService : IReceiptService
         throw new NotImplementedException();
 
     }
-    public async Task<IReadOnlyList<Receipt>> GetAllReceiptsForUserAsync(int userId)
+    public async Task<IReadOnlyList<ReceiptReadDto>> GetAllReceiptsForUserAsync(int userId)
     {
         throw new NotImplementedException();
     }

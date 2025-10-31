@@ -5,7 +5,7 @@ namespace ReceiptTracker.Application.Services.Users;
 
 public interface IUserService
 {
-    Task<IReadOnlyList<User>> GetAllUsersAsync();
+    Task<IReadOnlyList<UserReadDto>> GetAllUsersAsync();
     Task<UserReadDto?> FindByEmailAsync(string email);
     Task<UserReadDto?> FindByIdAsync(int id);
     Task<bool> DeleteAsync(int id);

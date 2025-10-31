@@ -18,14 +18,14 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<User>>> GetUsers()
+    public async Task<ActionResult<IReadOnlyList<UserReadDto>>> GetUsers()
     {
         var users = await _userService.GetAllUsersAsync();
         return Ok(users);
     }
 
     [HttpGet]
-    public async Task<ActionResult<User>> GetUserByEmail(string email)
+    public async Task<ActionResult<UserReadDto>> GetUserByEmail(string email)
     {
         if (string.IsNullOrEmpty(email))
             return BadRequest("Email cannot be empty.");
@@ -39,7 +39,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUserById(int id)
+    public async Task<ActionResult<UserReadDto>> GetUserById(int id)
     {
         if (id < 0)
             return BadRequest("Id must be a positive integer.");
