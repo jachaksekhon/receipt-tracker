@@ -1,4 +1,4 @@
-﻿namespace ReceiptTracker.Helpers;
+﻿namespace ReceiptTracker.Infrastructure.FileStorage;
 
 public static class FileUploadHelper
 {

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using ReceiptTracker.Application.DTOs.Auth;
 using ReceiptTracker.Application.DTOs.Users;
 using ReceiptTracker.Application.Services.Auth;
-using ReceiptTracker.Services.Users;
 
 namespace ReceiptTracker.API.Controllers;
 

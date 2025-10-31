@@ -1,6 +1,6 @@
 ﻿using ReceiptTracker.Application.DTOs.Receipts;
 
-namespace ReceiptTracker.Application.Parsers;
+namespace ReceiptTracker.Infrastructure.Parsers;
 
 public interface IReceiptParser
 {

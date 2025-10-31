@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ReceiptTracker.Application.DTOs.Users;
 using ReceiptTracker.Application.Services.Users;
 using ReceiptTracker.Domain.Models;
-using System.Reflection.Metadata.Ecma335;
 
 namespace ReceiptTracker.API.Controllers;
 
@@ -33,12 +32,10 @@ public class UserController : ControllerBase
         if (string.IsNullOrEmpty(email))
             return BadRequest("Email cannot be empty.");
 
-        var user = await _userService.FindByEmailAsync(email);
+        var userDto = await _userService.FindByEmailAsync(email);
 
-        if (user == null)
+        if (userDto == null)
             return NotFound($"No user found with the email '{email}'");
-
-        var userDto = _mapper.Map<UserReadDto>(user);
 
         return Ok(userDto);
     }
@@ -49,12 +46,10 @@ public class UserController : ControllerBase
         if (id < 0)
             return BadRequest("Id must be a positive integer.");
 
-        var user = await _userService.FindByIdAsync(id);
+        var userDto = await _userService.FindByIdAsync(id);
 
-        if (user == null)
+        if (userDto == null)
             return NotFound($"No user found with the id '{id}'");
-
-        var userDto = _mapper.Map<UserReadDto>(user);
 
         return Ok(userDto);
     }

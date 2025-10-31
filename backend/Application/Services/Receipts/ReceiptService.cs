@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using ReceiptTracker.Application.DTOs.Receipts;
-using ReceiptTracker.Application.Parsers;
 using ReceiptTracker.Domain.Models.Receipts;
-using ReceiptTracker.Helpers;
-using ReceiptTracker.Repositories.Receipts;
+using ReceiptTracker.Infrastructure.FileStorage;
+using ReceiptTracker.Infrastructure.Parsers;
+using ReceiptTracker.Infrastructure.Repositories.Receipts;
 
 namespace ReceiptTracker.Application.Services.Receipts;
 
