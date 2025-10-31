@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
+﻿using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using ReceiptTracker.Application.DTOs.Auth;
-using ReceiptTracker.Data;
+using ReceiptTracker.Application.DTOs.Users;
 using ReceiptTracker.Domain.Models;
 using ReceiptTracker.Infrastructure.Repositories.Users;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,17 +14,20 @@ namespace ReceiptTracker.Application.Services.Auth;
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
     private readonly IConfiguration _config;
 
-    public AuthService(IUserRepository userRepository, IConfiguration config)
+    public AuthService(IUserRepository userRepository, IMapper mapper, IConfiguration config)
     {
         _userRepository = userRepository;
+        _mapper = mapper;
         _config = config;
     }
 
-    public async Task<User> RegisterAsync(UserRegisterDto request)
+    public async Task<UserReadDto> RegisterAsync(UserRegisterDto request)
     {
         var existingUser = await _userRepository.FindByEmailAsync(request.Email);
+
         if (existingUser != null) 
             throw new Exception("User with this email already exists");
 
@@ -41,7 +44,9 @@ public class AuthService : IAuthService
 
         await _userRepository.CreateAsync(user);
 
-        return user;
+        var userReadDto = _mapper.Map<UserReadDto>(user);
+
+        return userReadDto;
     }
 
     public async Task<string> LoginAsync(UserLoginDto request)

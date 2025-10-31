@@ -30,9 +30,7 @@ public class AuthController : ControllerBase
         {
             var user = await _authService.RegisterAsync(request);
 
-            var response = _mapper.Map<UserReadDto>(user);
-
-            return Ok(response);
+            return Ok(user);
         }
         catch (Exception ex)
         {
