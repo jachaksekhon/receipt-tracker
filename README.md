@@ -24,7 +24,7 @@ A full-stack web application to help users track Costco receipts and detect pric
 - PostgreSQL (via Docker) → Production planned for **AWS EC2 + RDS**  
 - Entity Framework
 - JWT Authentication
-- OpenAI API for Image (receipt) processing
+- OpenAI API for OCR for backend processing
 
 ### DevOps / Infrastructure
 - Docker  
