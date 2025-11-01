@@ -62,6 +62,8 @@ public class ReceiptRepository : IReceiptRepository
         existing.TotalAmount = receipt.TotalAmount;
         existing.Notes = receipt.Notes;
 
+        existing.Items = receipt.Items;
+
         await _context.SaveChangesAsync();
         return existing;
     }

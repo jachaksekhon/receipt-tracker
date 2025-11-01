@@ -146,3 +146,4 @@ H:\Downloads\Projects\receipt-tracker\backend\obj\Debug\net9.0\refint\ReceiptTra
 H:\Downloads\Projects\receipt-tracker\backend\obj\Debug\net9.0\ReceiptTracker.pdb
 H:\Downloads\Projects\receipt-tracker\backend\obj\Debug\net9.0\ReceiptTracker.genruntimeconfig.cache
 H:\Downloads\Projects\receipt-tracker\backend\obj\Debug\net9.0\ref\ReceiptTracker.dll
+H:\Downloads\Projects\receipt-tracker\backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

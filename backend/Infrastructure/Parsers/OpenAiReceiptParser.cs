@@ -1,4 +1,5 @@
-﻿using OpenAI;
+﻿using AutoMapper;
+using OpenAI;
 using OpenAI.Chat;
 using ReceiptTracker.Application.DTOs.Receipts;
 using System.Data;
@@ -10,6 +11,7 @@ public class OpenAiReceiptParser : IReceiptParser
 {
     private readonly ChatClient _chatClient;
     private readonly string _model;
+    private readonly string _prompt;
 
     public OpenAiReceiptParser()
     {
@@ -17,6 +19,12 @@ public class OpenAiReceiptParser : IReceiptParser
             ?? throw new InvalidOperationException("Missing OpenAI API key. Check your .env file.");
 
         _model = Environment.GetEnvironmentVariable("OPENAI_MODEL") ?? "gpt-4o-mini";
+
+        var promptPath = Path.Combine(AppContext.BaseDirectory, "config", "prompts", "receipt_parser.txt");
+        if (!File.Exists(promptPath))
+            throw new FileNotFoundException($"Missing prompt file at: {promptPath}");
+
+        _prompt = File.ReadAllText(promptPath);
 
         _chatClient = new ChatClient(model: _model, apiKey: apiKey);
     }
@@ -29,18 +37,11 @@ public class OpenAiReceiptParser : IReceiptParser
         await imageStream.CopyToAsync(ms);
         var imageBytes = ms.ToArray();
 
-        var promptPath = Path.Combine(AppContext.BaseDirectory, "config", "prompts", "receipt_parser.txt");
-
-        if (!File.Exists(promptPath))
-            throw new FileNotFoundException($"Missing prompt file at: {promptPath}");
-
-        var prompt = await File.ReadAllTextAsync(promptPath);
-
 
         var messages = new List<ChatMessage>
         {
             new SystemChatMessage("You are a helpful receipt parsing assistant."),
-            new UserChatMessage(prompt),
+            new UserChatMessage(_prompt),
             new UserChatMessage(new List<ChatMessageContentPart>
             {
                 ChatMessageContentPart.CreateImagePart(new BinaryData(imageBytes), "image/jpeg")
@@ -61,26 +62,14 @@ public class OpenAiReceiptParser : IReceiptParser
 
         try
         {
-            var parsedLines = JsonSerializer.Deserialize<List<ParsedLineDto>>(json,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var parsedReceipt = JsonSerializer.Deserialize<ParsedReceiptDto>(
+                json,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                ?? throw new Exception("Failed to deserialize receipt JSON.");
 
-            if (parsedLines == null || parsedLines.Count == 0)
-                throw new Exception("No parsed lines returned.");
+            var mapped = ParsedReceiptMapper.MapToReceiptCreateDto(parsedReceipt);
 
-            Console.WriteLine("\n🧾 Extracted lines:");
-            foreach (var line in parsedLines)
-            {
-                Console.WriteLine($"- {line.RawText} | SKU: {line.Sku ?? "N/A"} | ${line.Price} | Neg: {line.IsNegative}");
-            }
-
-            // We'll convert this into ReceiptCreateDto in the next step.
-            return new ReceiptCreateDto
-            {
-                StoreName = "Unknown",
-                PurchaseDate = DateTime.UtcNow,
-                TotalAmount = 0,
-                Items = new()
-            };
+            return mapped;
         }
         catch (JsonException ex)
         {

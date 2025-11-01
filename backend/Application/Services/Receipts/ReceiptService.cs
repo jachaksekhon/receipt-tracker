@@ -63,22 +63,59 @@ public class ReceiptService : IReceiptService
 
         return _mapper.Map<ReceiptReadDto>(receipt);
     }
-   
-    //public async Task<ReceiptReadDto> ProcessReceiptAsync(int receiptId, int userId)
-    //{
-    //    var receipt = await _receiptRepository.FindByIdAsync(receiptId, userId);
 
-    //    if (receipt == null)
-    //        throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
+    public async Task<ReceiptReadDto> ProcessReceiptAsync(int receiptId, int userId)
+    {
+        var existing = await _receiptRepository.FindByIdAsync(receiptId, userId);
+        if (existing == null)
+            throw new Exception($"Receipt with ID {receiptId} not found for this user.");
 
-    //    if (string.IsNullOrEmpty(receipt.ImageUrl))
-    //        throw new Exception(ErrorMessages.ReceiptImageNotFound(receiptId));
+        // Get full image file path
+        var fullImagePath = Path.Combine(_env.WebRootPath, existing.ImageUrl.TrimStart('/'));
+        Console.WriteLine(fullImagePath);
+        if (!File.Exists(fullImagePath))
+            throw new Exception("Receipt image file not found on server.");
 
-    //    var filePath = Path.Combine(_env.WebRootPath, receipt.ImageUrl.TrimStart('/'));
-    //    if (!File.Exists(filePath))
-    //        throw new FileNotFoundException(ErrorMessages.ReceiptImageFileNotFound, filePath);
+        // Open file stream for the image
+        await using var stream = File.OpenRead(fullImagePath);
 
-    //}
+        var parser = _parsers.FirstOrDefault(p => p.CanParse("")); 
+        if (parser == null)
+            throw new Exception("No suitable parser available.");
+
+        var parsedDto = await parser.ParseAsync(stream);
+
+        Console.WriteLine(parsedDto.Items);
+
+        existing.StoreName = parsedDto.StoreName;
+        existing.PurchaseDate = DateTime.SpecifyKind(parsedDto.PurchaseDate, DateTimeKind.Utc);
+        existing.TotalAmount = parsedDto.TotalAmount;
+        existing.TotalNumberOfItems = parsedDto.TotalNumberOfItems;
+        existing.Status = Receipt.ReceiptStatus.Processed;
+
+        existing.Items = new List<ReceiptItem>();
+
+
+        foreach (var itemDto in parsedDto.Items)
+        {
+            existing.Items.Add(new ReceiptItem
+            {
+                ItemName = itemDto.ItemName,
+                ProductSku = itemDto.ProductSku,
+                Quantity = itemDto.Quantity,
+                OriginalPrice = itemDto.OriginalPrice,                    
+                DiscountAmount = itemDto.DiscountAmount,  
+                FinalPrice = itemDto.FinalPrice,         
+                Category = itemDto.Category
+            });
+        }
+
+        await _receiptRepository.UpdateAsync(existing);
+
+        // map receipt to read DTO
+        return _mapper.Map<ReceiptReadDto>(existing);
+
+    }
     public async Task<IReadOnlyList<ReceiptReadDto>> GetAllReceiptsForUserAsync(int userId)
     {
         throw new NotImplementedException();

@@ -6,4 +6,5 @@ public class ParsedLineDto
     public string? Sku { get; set; }
     public decimal Price { get; set; }
     public bool IsNegative { get; set; }
+    public string? ExpandedName { get; set; }
 }

@@ -40,4 +40,20 @@ public class ReceiptController : Controller
         }
 
     }
+
+    [HttpPost("{id}/process")]
+    public async Task<ActionResult<ReceiptReadDto>> ProcessReceipt(int id)
+    {
+        try
+        {
+            int userId = 1; 
+
+            var processedReceipt = await _receiptService.ProcessReceiptAsync(id, userId);
+            return Ok(processedReceipt);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
 }

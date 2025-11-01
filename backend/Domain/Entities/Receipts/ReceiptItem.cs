@@ -28,15 +28,6 @@ public class ReceiptItem
     [Column(TypeName = "decimal(10,2)")]
     public decimal FinalPrice { get; set; }         
 
-    [Column(TypeName = "decimal(10,2)")]
-    public decimal TotalPrice { get; set; }
-
-    [Column(TypeName = "decimal(10,2)")]
-    public decimal? DepositFee { get; set; }
-
-    [Column(TypeName = "decimal(10,2)")]
-    public decimal? EnvironmentalFee { get; set; }
-
     public string? Category { get; set; }
 
     // For manual entry tracking

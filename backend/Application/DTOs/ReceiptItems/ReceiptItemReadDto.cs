@@ -6,7 +6,8 @@ public class ReceiptItemReadDto
     public string? ProductSku { get; set; }
     public string ItemName { get; set; } = string.Empty;
     public int Quantity { get; set; }
-    public decimal Price { get; set; }
-    public decimal TotalPrice => Quantity * Price;
+    public decimal OriginalPrice { get; set; }
+    public decimal DiscountAmount { get; set; }
+    public decimal FinalPrice { get; set; }
     public string? Category { get; set; }
 }
