@@ -20,7 +20,10 @@ public static class ErrorMessages
     public const string ReceiptUploadFailed = "Failed to upload receipt image.";
     public const string ReceiptProcessFailed = "Failed to process receipt.";
     public const string InvalidReceiptFormat = "Invalid receipt format or unsupported file type.";
+    public const string ReceiptImageFileNotFound = "Receipt image file not found.";
     public static string ReceiptNotFound(int id) => $"Receipt with ID '{id}' not found.";
+    public static string ReceiptImageNotFound(int id) => $"Could not retrieve image for receipt with ID '{id}'.";
+
 
     // System / Generic
     public const string UnexpectedError = "An unexpected error occurred. Please try again later.";

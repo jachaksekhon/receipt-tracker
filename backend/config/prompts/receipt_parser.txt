@@ -1,0 +1,26 @@
+You are a receipt line extractor.
+
+Please return the date in the format YYYY/MM/DD
+Extract *every line* that looks like a line item or fee from this receipt image.
+Return each line as a JSON object in this structure:
+
+{
+  "rawText": string,
+  "sku": string | null,
+  "price": number,
+  "isNegative": boolean,
+  "expandedName": string | null
+}
+
+Rules:
+- You can ignore ach fee or charge line
+- For example:
+  - “ENVIRO FEE" or “DEPOSIT” or “DEP CL” should be ignored
+- If a line includes a 5–7 digit number followed by text and a price, capture it.
+- Expand any abbreviated or truncated product names (e.g., "KS GRK YGRT" → "Kirkland Signature Greek Yogurt").
+- If you are unsure, make your best reasonable guess based on common Costco products.
+- If the line contains "TPD" or a minus sign, mark "isNegative": true.
+- If the line contains "ENV", "FEE", or any variant of "DEP" or "DEPOSIT", mark "isNegative": false (these are positive fees).
+- Do not merge or combine multiple fees into one item — always separate them if they appear on distinct lines.
+- Ignore totals, payment info, and date/time lines.
+- Return only valid JSON — an array of objects, no extra text

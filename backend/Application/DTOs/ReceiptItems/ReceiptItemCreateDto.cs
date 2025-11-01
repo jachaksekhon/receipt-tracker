@@ -15,6 +15,7 @@ public class ReceiptItemCreateDto
     [Range(0.01, double.MaxValue, ErrorMessage = "Total amount must be greater than 0.")]
     public decimal Price { get; set; }
 
+    public bool IsDiscount {  get; set; }
     public string? Category { get; set; }
 
 }

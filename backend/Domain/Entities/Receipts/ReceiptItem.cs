@@ -15,17 +15,34 @@ public class ReceiptItem
     public string ItemName { get; set; } = string.Empty;
 
     public string? ProductSku { get; set; }
-    public int Quantity { get; set; }
+
+    public int Quantity { get; set; } = 1;
+
+    // Price fields
+    [Column(TypeName = "decimal(10,2)")]
+    public decimal OriginalPrice { get; set; }      
 
     [Column(TypeName = "decimal(10,2)")]
-    public decimal Price { get; set; }
+    public decimal DiscountAmount { get; set; }    
+
+    [Column(TypeName = "decimal(10,2)")]
+    public decimal FinalPrice { get; set; }         
 
     [Column(TypeName = "decimal(10,2)")]
     public decimal TotalPrice { get; set; }
 
-    public string? Category { get; set; }
-    public string? Receipt { get; set; }
+    [Column(TypeName = "decimal(10,2)")]
+    public decimal? DepositFee { get; set; }
 
-    // for manually added receiptitems to receipts
-    public bool isManuallyAdded { get; set; } = false;
+    [Column(TypeName = "decimal(10,2)")]
+    public decimal? EnvironmentalFee { get; set; }
+
+    public string? Category { get; set; }
+
+    // For manual entry tracking
+    public bool IsManuallyAdded { get; set; } = false;
+
+    // ✅ Derived helper (not stored in DB)
+    [NotMapped]
+    public bool WasDiscounted => DiscountAmount > 0;
 }

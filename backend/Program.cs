@@ -6,39 +6,44 @@ using ReceiptTracker.Infrastructure.Data;
 using ReceiptTracker.Infrastructure.Repositories.Receipts;
 using ReceiptTracker.Infrastructure.Repositories.Users;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add EF Core + PostgreSQL
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddAutoMapper(typeof(Program));
+DotNetEnv.Env.Load();
+
+await TestParser.RunAsync();
+
+//// Add EF Core + PostgreSQL
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddAutoMapper(typeof(Program));
 
 
-// Add controllers
-builder.Services.AddControllers();
+//// Add controllers
+//builder.Services.AddControllers();
 
-// Dependency injection for repositories & services
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
-builder.Services.AddScoped<IReceiptService, ReceiptService>();
+//// Dependency injection for repositories & services
+//builder.Services.AddScoped<IUserRepository, UserRepository>();
+//builder.Services.AddScoped<IUserService, UserService>();
+//builder.Services.AddScoped<IAuthService, AuthService>();
+//builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
+//builder.Services.AddScoped<IReceiptService, ReceiptService>();
 
-// Add CORS (optional, useful for frontend testing)
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowAnyOrigin();
-    });
-});
+//// Add CORS (optional, useful for frontend testing)
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(policy =>
+//    {
+//        policy.AllowAnyHeader()
+//              .AllowAnyMethod()
+//              .AllowAnyOrigin();
+//    });
+//});
 
-// Authentication setup will come soon (JWT)
-var app = builder.Build();
+//// Authentication setup will come soon (JWT)
+//var app = builder.Build();
 
-app.UseCors();
-app.UseStaticFiles();
-app.MapControllers();
-app.Run();
+//app.UseCors();
+//app.UseStaticFiles();
+//app.MapControllers();
+//app.Run();

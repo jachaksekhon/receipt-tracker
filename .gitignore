@@ -1,6 +1,7 @@
 # Environment variables
 .env
 node_modules/
+config/prompts/*.txt
 
 # Visual Studio
 .vs/

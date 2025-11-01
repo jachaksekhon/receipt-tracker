@@ -15,6 +15,7 @@ public class ReceiptCreateDto
     [Range(0.01, double.MaxValue, ErrorMessage = "Total amount must be greater than 0.")]
     public decimal TotalAmount { get; set; }
 
+    public int TotalNumberOfItems { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
     public string? Notes { get; set; }
     public List<ReceiptItemCreateDto> Items { get; set; } = new();

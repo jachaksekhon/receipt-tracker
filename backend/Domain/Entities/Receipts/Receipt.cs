@@ -28,6 +28,7 @@ public class Receipt
     [Column(TypeName = "decimal(10,2)")]
     public decimal TotalAmount { get; set; }
 
+    public int TotalNumberOfItems { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
     public ReceiptStatus Status { get; set; }
     public string? Notes { get; set; }

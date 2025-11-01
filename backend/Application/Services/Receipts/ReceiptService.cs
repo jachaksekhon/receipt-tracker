@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using ReceiptTracker.Application.Constants;
 using ReceiptTracker.Application.DTOs.Receipts;
 using ReceiptTracker.Domain.Models.Receipts;
 using ReceiptTracker.Infrastructure.FileStorage;
@@ -61,20 +63,22 @@ public class ReceiptService : IReceiptService
 
         return _mapper.Map<ReceiptReadDto>(receipt);
     }
-    public async Task<ReceiptReadDto> ProcessReceiptAsync(int receiptID)
-    {
-        throw new NotImplementedException();
-    }
-    public async Task<ReceiptReadDto> ProcessReceiptAsync(ReceiptUploadDto uploadDto, int userId)
-    {
-        if (uploadDto.File == null)
-            throw new Exception("No file provided.");
+   
+    //public async Task<ReceiptReadDto> ProcessReceiptAsync(int receiptId, int userId)
+    //{
+    //    var receipt = await _receiptRepository.FindByIdAsync(receiptId, userId);
 
-        var imageUrl = await SaveImageAsync(uploadDto.File);
+    //    if (receipt == null)
+    //        throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
 
-        throw new NotImplementedException();
+    //    if (string.IsNullOrEmpty(receipt.ImageUrl))
+    //        throw new Exception(ErrorMessages.ReceiptImageNotFound(receiptId));
 
-    }
+    //    var filePath = Path.Combine(_env.WebRootPath, receipt.ImageUrl.TrimStart('/'));
+    //    if (!File.Exists(filePath))
+    //        throw new FileNotFoundException(ErrorMessages.ReceiptImageFileNotFound, filePath);
+
+    //}
     public async Task<IReadOnlyList<ReceiptReadDto>> GetAllReceiptsForUserAsync(int userId)
     {
         throw new NotImplementedException();
