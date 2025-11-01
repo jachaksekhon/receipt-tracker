@@ -7,7 +7,7 @@ A full-stack web application to help users track Costco receipts and detect pric
 ## Features (WIP)
 
 - [x] **User Authentication**  – Secure signup/login with JWT.
-- [x] **Receipt Upload and Processing**  – Upload and store receipts in a database.
+- [x] **Receipt Upload and Processing**  – Upload, process and store receipts in a database.
 - [ ] **Price Drop Detection** – Match receipts against weekly flyers for discounts.
 - [ ] **User Notifications**   – Alert users when purchased items go on sale.
 
