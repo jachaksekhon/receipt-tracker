@@ -10,8 +10,9 @@ public class Receipt
     {
         Uploaded = 1,
         Processing = 2,
-        Processed = 3,
-        ErrorProcessing = 4
+        PendingReview = 3,
+        Processed = 4,
+        ErrorProcessing = 5
     }
 
     [Key]

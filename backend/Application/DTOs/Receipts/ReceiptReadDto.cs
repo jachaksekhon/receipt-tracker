@@ -1,4 +1,5 @@
 ﻿using ReceiptTracker.Application.DTOs.ReceiptItems;
+using ReceiptTracker.Domain.Models.Receipts;
 
 namespace ReceiptTracker.Application.DTOs.Receipts;
 
@@ -8,6 +9,8 @@ public class ReceiptReadDto
     public string StoreName { get; set; } = string.Empty;
     public DateTime PurchaseDate { get; set; }
     public decimal TotalAmount { get; set; }
+    public int TotalNumberOfItems { get; set; }
+    public Receipt.ReceiptStatus Status { get; set; }
     public string ImageUrl { get; set; } = string.Empty;
     public string? Notes { get; set; }
     public int ItemCount => Items?.Count ?? 0;

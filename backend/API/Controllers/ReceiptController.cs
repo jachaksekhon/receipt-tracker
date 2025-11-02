@@ -21,7 +21,7 @@ public class ReceiptController : Controller
     {
         try
         {
-            // will update to take current user id
+            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
             int id = 1;
             ReceiptReadDto receiptDto = await _receiptService.UploadReceiptAsync(uploadDto, id);
             return Ok(receiptDto);
@@ -41,19 +41,41 @@ public class ReceiptController : Controller
 
     }
 
-    [HttpPost("{id}/process")]
-    public async Task<ActionResult<ReceiptReadDto>> ProcessReceipt(int id)
+    [HttpPost("{receiptId}/process")]
+    public async Task<ActionResult<ReceiptReadDto>> ProcessReceipt(int receiptId)
     {
         try
         {
             int userId = 1; 
 
-            var processedReceipt = await _receiptService.ProcessReceiptAsync(id, userId);
+            var processedReceipt = await _receiptService.ProcessReceiptAsync(receiptId, userId);
             return Ok(processedReceipt);
         }
         catch (Exception ex)
         {
             return BadRequest(new { error = ex.Message });
         }
+    }
+
+    [HttpGet("{receiptId}/confirm")]
+    public async Task<ActionResult<ReceiptPreviewDto>> GetConfirmPreview(int receiptId)
+    {
+        // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
+        var userId = 1;
+        var receipt = await _receiptService.GetReceiptPreviewAsync(receiptId, userId);
+        if (receipt == null)
+            return NotFound();
+
+        return Ok(receipt);
+    }
+
+    [HttpPost("{receiptId}/confirm")]
+    public async Task<ActionResult<ReceiptReadDto>> ConfirmReceipt(int receiptId, [FromBody] ReceiptConfirmDto dto)
+    {
+        // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
+        var userId = 1;
+
+        var result = await _receiptService.ConfirmReceiptAsync(receiptId, userId, dto);
+        return Ok(result);
     }
 }
