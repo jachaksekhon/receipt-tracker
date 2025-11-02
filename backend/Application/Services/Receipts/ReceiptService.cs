@@ -36,7 +36,21 @@ public class ReceiptService : IReceiptService
 
     public async Task<ReceiptReadDto> UploadReceiptAsync(ReceiptUploadDto uploadDto, int userId)
     {
-        var imageUrl = await SaveImageAsync(uploadDto.File);
+        var imageUrl = string.Empty;
+
+        try
+        {
+            imageUrl = await SaveImageAsync(uploadDto.File);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new Exception(ErrorMessages.InvalidReceiptFormat, ex);
+        }
+        catch (IOException ex)
+        {
+            // File system issue (e.g., permission denied)
+            throw new Exception(ErrorMessages.FailedToUploadFileToServer, ex);
+        }
 
         var receipt = new Receipt
         {
@@ -59,7 +73,7 @@ public class ReceiptService : IReceiptService
             if (File.Exists(fullPath))
                 File.Delete(fullPath);
 
-            throw new Exception("Database operation failed when creating receipt.", ex);
+            throw new Exception(ErrorMessages.FailedToSaveFileToDatabase, ex);
         }
 
         return _mapper.Map<ReceiptReadDto>(receipt);
@@ -69,20 +83,20 @@ public class ReceiptService : IReceiptService
     {
         var existing = await _receiptRepository.FindByIdAsync(receiptId, userId);
         if (existing == null)
-            throw new Exception($"Receipt with ID {receiptId} not found for this user.");
+            throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
 
         // Get full image file path
         var fullImagePath = Path.Combine(_env.WebRootPath, existing.ImageUrl.TrimStart('/'));
         Console.WriteLine(fullImagePath);
         if (!File.Exists(fullImagePath))
-            throw new Exception("Receipt image file not found on server.");
+            throw new Exception(ErrorMessages.ReceiptImageNotFound(receiptId));
 
         // Open file stream for the image
         await using var stream = File.OpenRead(fullImagePath);
 
         var parser = _parsers.FirstOrDefault(p => p.CanParse("")); 
         if (parser == null)
-            throw new Exception("No suitable parser available.");
+            throw new Exception(ErrorMessages.ParserNotAvailable);
 
 
         existing.Status = Receipt.ReceiptStatus.Processing;
@@ -118,13 +132,13 @@ public class ReceiptService : IReceiptService
     public async Task<ReceiptReadDto> GetReceiptPreviewAsync(int receiptId, int userId)
     {
         var existing = await _receiptRepository.FindByIdAsync(receiptId, userId)
-            ?? throw new Exception($"Receipt with ID {receiptId} not found for this user.");
+            ?? throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
 
         if (existing.Status is not (Receipt.ReceiptStatus.PendingReview
                              or Receipt.ReceiptStatus.Processing
                              or Receipt.ReceiptStatus.Processed))
         {
-            throw new Exception("Receipt is not ready for preview.");
+            throw new Exception(ErrorMessages.ReceiptNotReadyForPreview);
         }
 
         // Just map the stored DB entity to the same DTO the frontend expects
@@ -135,7 +149,7 @@ public class ReceiptService : IReceiptService
     public async Task<ReceiptReadDto> ConfirmReceiptAsync(int receiptId, int userId, ReceiptConfirmDto receiptConfirmDto)
     {
         var existing = await _receiptRepository.FindByIdAsync(receiptId, userId)
-        ?? throw new Exception($"Receipt with ID {receiptId} not found for this user.");
+        ?? throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
 
         // 2️⃣ Update main receipt fields with the user's edited data
         existing.StoreName = receiptConfirmDto.StoreName;
@@ -205,7 +219,6 @@ public class ReceiptService : IReceiptService
         await file.CopyToAsync(stream);
 
         return $"/uploads/{uniqueFileName}";
-
     }
 
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReceiptTracker.Application.Constants;
 using ReceiptTracker.Application.DTOs.Receipts;
 using ReceiptTracker.Application.Services.Receipts;
 using System.ComponentModel.DataAnnotations;
@@ -36,7 +37,7 @@ public class ReceiptController : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "An unexpected error occured" });
+            return StatusCode(500, new { message = ErrorMessages.UnexpectedError });
         }
 
     }
@@ -75,7 +76,26 @@ public class ReceiptController : Controller
         // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
         var userId = 1;
 
-        var result = await _receiptService.ConfirmReceiptAsync(receiptId, userId, dto);
-        return Ok(result);
+        try
+        {
+            var result = await _receiptService.ConfirmReceiptAsync(receiptId, userId, dto);
+            return Ok(result);
+        }
+        catch (FileNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = ErrorMessages.ErrorConfirmingReceipt });
+        }
     }
 }
