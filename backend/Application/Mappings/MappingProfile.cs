@@ -22,7 +22,6 @@ public class MappingProfile : Profile
 
         // Receipt <-> DTO
         CreateMap<Receipt, ReceiptReadDto>()
-            .ForMember(dest => dest.ItemCount, opt => opt.MapFrom(src => src.Items.Count))
             .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
             .ReverseMap();
 
