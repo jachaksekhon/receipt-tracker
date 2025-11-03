@@ -47,7 +47,7 @@ public class ReceiptController : Controller
     {
         try
         {
-            int userId = 1; 
+            int userId = 1;
 
             var processedReceipt = await _receiptService.ProcessReceiptAsync(receiptId, userId);
             return Ok(processedReceipt);
@@ -66,7 +66,7 @@ public class ReceiptController : Controller
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { error = "An unexpected error occurred while processing the receipt." });
+            return StatusCode(500, ErrorMessages.FailedToProcessReceipt);
         }
     }
 
@@ -118,6 +118,30 @@ public class ReceiptController : Controller
         {
             var receipts = await _receiptService.GetAllReceiptsForUserAsync(userId);
             return Ok(receipts);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
+
+    [HttpDelete("{receiptId}")]
+    public async Task<IActionResult> DeleteReceipt(int receiptId)
+    {
+        try
+        {
+            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
+            int userId = 1;
+
+            var success = await _receiptService.DeleteAsync(receiptId, userId);
+            if (!success)
+                return NotFound(ErrorMessages.ReceiptNotFound(receiptId));
+
+            return Ok(Strings.ReceiptDeleteSuccess);
+        }
+        catch (FileNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
         }
         catch (Exception ex)
         {

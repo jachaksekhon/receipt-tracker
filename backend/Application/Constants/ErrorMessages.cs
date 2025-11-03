@@ -32,6 +32,7 @@ public static class ErrorMessages
     public const string UploadCostcoReceipt = "Only Costco receipts are supported. Please upload a valid Costco receipt.";
     public static string ReceiptNotFound(int id) => $"Receipt with ID '{id}' not found.";
     public static string ReceiptImageNotFound(int id) => $"Could not retrieve image for receipt with ID '{id}'.";
+    public static string FailedToDeleteReceipt(int id) => $"Failed to delete receipt with id '{id}'";
 
 
     // System / Generic

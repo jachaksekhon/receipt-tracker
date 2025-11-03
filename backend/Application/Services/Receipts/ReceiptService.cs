@@ -212,7 +212,29 @@ public class ReceiptService : IReceiptService
     }
     public async Task<bool> DeleteAsync(int id, int userId)
     {
-        throw new NotImplementedException();
+        var existing = await _receiptRepository.FindByIdAsync(id, userId);
+
+        if (existing == null)
+            throw new FileNotFoundException(ErrorMessages.ReceiptNotFound(id));
+
+        var fullImagePath = Path.Combine(_env.WebRootPath, existing.ImageUrl.TrimStart('/'));
+
+        try
+        {
+            var success = await _receiptRepository.DeleteAsync(id, userId);
+            if (!success)
+                throw new Exception(ErrorMessages.FailedToDeleteReceipt(id));
+
+            if (File.Exists(fullImagePath))
+                File.Delete(fullImagePath);
+
+            return success;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ErrorMessages.FailedToDeleteReceipt(id));
+        }
+
     }
 
     // Helpers

@@ -40,6 +40,7 @@ public class ReceiptRepository : IReceiptRepository
     public async Task<bool> DeleteAsync(int id, int userid)
     {
         var found = await _context.Receipts
+            .Include (r => r.Items)
             .FirstOrDefaultAsync(r => r.Id == id && r.UserId == userid);
 
         if (found == null)
