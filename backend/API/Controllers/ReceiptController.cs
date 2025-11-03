@@ -133,7 +133,7 @@ public class ReceiptController : Controller
         }
     }
 
-    [HttpGet("user/{userId}")]
+    [HttpGet]
     public async Task<ActionResult<IReadOnlyList<ReceiptReadDto>>> GetAllReceiptsForUser()
     {
         try
