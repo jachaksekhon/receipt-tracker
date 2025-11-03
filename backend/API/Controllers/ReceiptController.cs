@@ -20,8 +20,7 @@ public class ReceiptController : BaseApiController
     {
         try
         {
-            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
-            int userId = 1;
+            int userId = GetCurrentUserId();
 
             var receipt = await _receiptService.FindByIdAsync(receiptId, userId);
             return Ok(receipt);
@@ -41,8 +40,8 @@ public class ReceiptController : BaseApiController
     {
         try
         {
-            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
-            int userId = 1;
+            int userId = GetCurrentUserId();
+
             ReceiptReadDto receiptDto = await _receiptService.UploadReceiptAsync(uploadDto, userId);
             return Ok(receiptDto);
         }
@@ -66,8 +65,7 @@ public class ReceiptController : BaseApiController
     {
         try
         {
-            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
-            int userId = 1;
+            int userId = GetCurrentUserId();
 
             var processedReceipt = await _receiptService.ProcessReceiptAsync(receiptId, userId);
             return Ok(processedReceipt);
@@ -93,8 +91,8 @@ public class ReceiptController : BaseApiController
     [HttpGet("{receiptId}/confirm")]
     public async Task<ActionResult<ReceiptPreviewDto>> GetConfirmPreview(int receiptId)
     {
-        // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
-        var userId = 1;
+        int userId = GetCurrentUserId();
+
         var receipt = await _receiptService.GetReceiptPreviewAsync(receiptId, userId);
         if (receipt == null)
             return NotFound();
@@ -105,8 +103,7 @@ public class ReceiptController : BaseApiController
     [HttpPost("{receiptId}/confirm")]
     public async Task<ActionResult<ReceiptReadDto>> ConfirmReceipt(int receiptId, [FromBody] ReceiptConfirmDto dto)
     {
-        // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
-        var userId = 1;
+        int userId = GetCurrentUserId();
 
         try
         {
@@ -136,8 +133,7 @@ public class ReceiptController : BaseApiController
     {
         try
         {
-            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
-            var userId = 1;
+            int userId = GetCurrentUserId();
 
             var receipts = await _receiptService.GetAllReceiptsForUserAsync(userId);
             return Ok(receipts);
@@ -153,8 +149,7 @@ public class ReceiptController : BaseApiController
     {
         try
         {
-            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
-            int userId = 1;
+            int userId = GetCurrentUserId();
 
             var success = await _receiptService.DeleteAsync(receiptId, userId);
             if (!success)

@@ -23,7 +23,7 @@ public class UserController : BaseApiController
     [HttpGet("me")]
     public async Task<ActionResult<UserReadDto>> GetCurrentUser()
     {
-        int userId = GetCurrentUserId(); // from BaseApiController
+        int userId = GetCurrentUserId();
         var user = await _userService.FindByIdAsync(userId);
 
         if (user == null)
