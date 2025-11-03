@@ -17,14 +17,35 @@ public class ReceiptController : Controller
         _receiptService = receiptService;
     }
 
+    [HttpGet("{receiptId}")]
+    public async Task<ActionResult<ReceiptReadDto>> GetReceiptById(int receiptId)
+    {
+        try
+        {
+            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
+            int userId = 1;
+
+            var receipt = await _receiptService.FindByIdAsync(receiptId, userId);
+            return Ok(receipt);
+        }
+        catch (FileNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = "An unexpected error occurred." });
+        }
+    }
+
     [HttpPost("upload")]
     public async Task<ActionResult<ReceiptReadDto>> UploadReceipt([FromForm] ReceiptUploadDto uploadDto)
     {
         try
         {
             // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
-            int id = 1;
-            ReceiptReadDto receiptDto = await _receiptService.UploadReceiptAsync(uploadDto, id);
+            int userId = 1;
+            ReceiptReadDto receiptDto = await _receiptService.UploadReceiptAsync(uploadDto, userId);
             return Ok(receiptDto);
         }
         catch (ValidationException ex)
@@ -47,6 +68,7 @@ public class ReceiptController : Controller
     {
         try
         {
+            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
             int userId = 1;
 
             var processedReceipt = await _receiptService.ProcessReceiptAsync(receiptId, userId);
@@ -112,10 +134,13 @@ public class ReceiptController : Controller
     }
 
     [HttpGet("user/{userId}")]
-    public async Task<ActionResult<IReadOnlyList<ReceiptReadDto>>> GetAllReceiptsForUser(int userId)
+    public async Task<ActionResult<IReadOnlyList<ReceiptReadDto>>> GetAllReceiptsForUser()
     {
         try
         {
+            // **** TODO: PERSIST USER ID FROM CURRENT INSTANCE ****
+            var userId = 1;
+
             var receipts = await _receiptService.GetAllReceiptsForUserAsync(userId);
             return Ok(receipts);
         }

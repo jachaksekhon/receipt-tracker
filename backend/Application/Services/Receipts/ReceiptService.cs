@@ -206,24 +206,31 @@ public class ReceiptService : IReceiptService
 
         return mappedReceipts;
     }
-    public async Task<ReceiptReadDto> FindByIdAsync(int id)
+    public async Task<ReceiptReadDto> FindByIdAsync(int receiptId, int userId)
     {
-        throw new NotImplementedException();
+        var found = await _receiptRepository.FindByIdAsync(receiptId, userId);
+
+        if (found == null)
+            throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
+
+        var receiptDto = _mapper.Map<ReceiptReadDto>(found);
+
+        return receiptDto;
     }
-    public async Task<bool> DeleteAsync(int id, int userId)
+    public async Task<bool> DeleteAsync(int receiptId, int userId)
     {
-        var existing = await _receiptRepository.FindByIdAsync(id, userId);
+        var existing = await _receiptRepository.FindByIdAsync(receiptId, userId);
 
         if (existing == null)
-            throw new FileNotFoundException(ErrorMessages.ReceiptNotFound(id));
+            throw new FileNotFoundException(ErrorMessages.ReceiptNotFound(receiptId));
 
         var fullImagePath = Path.Combine(_env.WebRootPath, existing.ImageUrl.TrimStart('/'));
 
         try
         {
-            var success = await _receiptRepository.DeleteAsync(id, userId);
+            var success = await _receiptRepository.DeleteAsync(receiptId, userId);
             if (!success)
-                throw new Exception(ErrorMessages.FailedToDeleteReceipt(id));
+                throw new Exception(ErrorMessages.FailedToDeleteReceipt(receiptId));
 
             if (File.Exists(fullImagePath))
                 File.Delete(fullImagePath);
@@ -232,7 +239,7 @@ public class ReceiptService : IReceiptService
         }
         catch (Exception ex)
         {
-            throw new Exception(ErrorMessages.FailedToDeleteReceipt(id));
+            throw new Exception(ErrorMessages.FailedToDeleteReceipt(receiptId));
         }
 
     }
