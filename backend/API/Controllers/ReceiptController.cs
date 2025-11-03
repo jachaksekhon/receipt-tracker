@@ -52,9 +52,21 @@ public class ReceiptController : Controller
             var processedReceipt = await _receiptService.ProcessReceiptAsync(receiptId, userId);
             return Ok(processedReceipt);
         }
-        catch (Exception ex)
+        catch (FileNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (ArgumentException ex)
         {
             return BadRequest(new { error = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = "An unexpected error occurred while processing the receipt." });
         }
     }
 

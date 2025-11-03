@@ -15,7 +15,7 @@ public static class ParsedReceiptMapper
 
         var newReceiptDto = new ReceiptCreateDto
         {
-            StoreName = parsed.StoreName ?? "Costco",
+            StoreName = parsed.StoreName ?? "",
             PurchaseDate = parsed.Date ?? DateTime.UtcNow,
             Items = new List<ReceiptItemCreateDto>()
         };

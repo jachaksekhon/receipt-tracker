@@ -81,52 +81,67 @@ public class ReceiptService : IReceiptService
 
     public async Task<ReceiptReadDto> ProcessReceiptAsync(int receiptId, int userId)
     {
-        var existing = await _receiptRepository.FindByIdAsync(receiptId, userId);
-        if (existing == null)
-            throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
-
-        // Get full image file path
-        var fullImagePath = Path.Combine(_env.WebRootPath, existing.ImageUrl.TrimStart('/'));
-        Console.WriteLine(fullImagePath);
-        if (!File.Exists(fullImagePath))
-            throw new Exception(ErrorMessages.ReceiptImageNotFound(receiptId));
-
-        // Open file stream for the image
-        await using var stream = File.OpenRead(fullImagePath);
-
-        var parser = _parsers.FirstOrDefault(p => p.CanParse("")); 
-        if (parser == null)
-            throw new Exception(ErrorMessages.ParserNotAvailable);
-
-
-        existing.Status = Receipt.ReceiptStatus.Processing;
-
-        var parsedDto = await parser.ParseAsync(stream);
-
-        existing.StoreName = parsedDto.StoreName;
-        existing.PurchaseDate = DateTime.SpecifyKind(parsedDto.PurchaseDate, DateTimeKind.Utc);
-        existing.TotalAmount = parsedDto.TotalAmount;
-        existing.TotalNumberOfItems = parsedDto.TotalNumberOfItems;
-        existing.Status = Receipt.ReceiptStatus.PendingReview;
-
-        existing.Items = new List<ReceiptItem>();
-
-        existing.Items = parsedDto.Items.Select(i => new ReceiptItem
+        try
         {
-            ItemName = i.ItemName,
-            ProductSku = i.ProductSku,
-            Quantity = i.Quantity,
-            OriginalPrice = i.OriginalPrice,
-            DiscountAmount = i.DiscountAmount,
-            FinalPrice = i.FinalPrice,
-            Category = i.Category
-        }).ToList();
 
-        await _receiptRepository.UpdateAsync(existing);
+            var existing = await _receiptRepository.FindByIdAsync(receiptId, userId)
+                ?? throw new FileNotFoundException(ErrorMessages.ReceiptNotFound(receiptId));
 
-        var previewDto = _mapper.Map<ReceiptReadDto>(existing);
+            var fullImagePath = Path.Combine(_env.WebRootPath, existing.ImageUrl.TrimStart('/'));
+            if (!File.Exists(fullImagePath))
+                throw new FileNotFoundException(ErrorMessages.ReceiptImageNotFound(receiptId));
 
-        return previewDto;
+            ReceiptCreateDto parsedDto;
+
+            await using (var stream = File.OpenRead(fullImagePath))
+            {
+                var parser = _parsers.FirstOrDefault(p => p.CanParse(""))
+                    ?? throw new InvalidOperationException(ErrorMessages.ParserNotAvailable);
+
+                existing.Status = Receipt.ReceiptStatus.Processing;
+                await _receiptRepository.UpdateAsync(existing);
+
+                parsedDto = await parser.ParseAsync(stream);
+            }
+
+            // Check for Costco only receipts
+            if (!parsedDto.StoreName.Contains(Strings.Costco, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (File.Exists(fullImagePath))
+                        File.Delete(fullImagePath);
+
+                    await _receiptRepository.DeleteAsync(receiptId, userId);
+
+                    throw new ArgumentException(ErrorMessages.UploadCostcoReceipt);
+                }
+
+            existing.StoreName = parsedDto.StoreName;
+            existing.PurchaseDate = DateTime.SpecifyKind(parsedDto.PurchaseDate, DateTimeKind.Utc);
+            existing.TotalAmount = parsedDto.TotalAmount;
+            existing.TotalNumberOfItems = parsedDto.TotalNumberOfItems;
+            existing.Status = Receipt.ReceiptStatus.PendingReview;
+
+            existing.Items = parsedDto.Items.Select(i => new ReceiptItem
+            {
+                ItemName = i.ItemName,
+                ProductSku = i.ProductSku,
+                Quantity = i.Quantity,
+                OriginalPrice = i.OriginalPrice,
+                DiscountAmount = i.DiscountAmount,
+                FinalPrice = i.FinalPrice,
+                Category = i.Category
+            }).ToList();
+
+            await _receiptRepository.UpdateAsync(existing);
+
+            return _mapper.Map<ReceiptReadDto>(existing);
+        }
+        catch (FileNotFoundException) { throw; }
+        catch (ArgumentException) { throw; }
+        catch (InvalidOperationException) { throw; }
+        catch (Exception ex) { 
+            throw new Exception(ErrorMessages.FailedToProcessReceipt, ex);
+        }
     }
 
     public async Task<ReceiptReadDto> GetReceiptPreviewAsync(int receiptId, int userId)
