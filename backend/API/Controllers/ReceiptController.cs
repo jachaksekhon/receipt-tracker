@@ -110,4 +110,19 @@ public class ReceiptController : Controller
             return StatusCode(500, new { message = ErrorMessages.ErrorConfirmingReceipt });
         }
     }
+
+    [HttpGet("user/{userId}")]
+    public async Task<ActionResult<IReadOnlyList<ReceiptReadDto>>> GetAllReceiptsForUser(int userId)
+    {
+        try
+        {
+            var receipts = await _receiptService.GetAllReceiptsForUserAsync(userId);
+            return Ok(receipts);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = ex.Message });
+        }
+    }
+
 }

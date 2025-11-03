@@ -156,7 +156,6 @@ public class ReceiptService : IReceiptService
             throw new Exception(ErrorMessages.ReceiptNotReadyForPreview);
         }
 
-        // Just map the stored DB entity to the same DTO the frontend expects
         var previewDto = _mapper.Map<ReceiptReadDto>(existing);
         return previewDto;
     }
@@ -166,16 +165,13 @@ public class ReceiptService : IReceiptService
         var existing = await _receiptRepository.FindByIdAsync(receiptId, userId)
         ?? throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
 
-        // 2️⃣ Update main receipt fields with the user's edited data
         existing.StoreName = receiptConfirmDto.StoreName;
         existing.PurchaseDate = DateTime.SpecifyKind(receiptConfirmDto.PurchaseDate, DateTimeKind.Utc);
         existing.TotalAmount = receiptConfirmDto.TotalAmount;
         existing.TotalNumberOfItems = receiptConfirmDto.Items.Count;
 
-        // You can safely keep this — it won't break future edits
         existing.Status = Receipt.ReceiptStatus.Processed;
 
-        // 3️⃣ Clear and rebuild items from user-provided DTO
         existing.Items.Clear();
         foreach (var item in receiptConfirmDto.Items)
         {
@@ -191,7 +187,7 @@ public class ReceiptService : IReceiptService
             });
         }
 
-        // Again needs to be updated, this is not accurate since we dont include depoists / fees
+        // **TODO** Again needs to be updated, this is not accurate since we dont include depoists / fees
         existing.TotalAmount = existing.Items.Sum(i => i.FinalPrice * i.Quantity);
 
         await _receiptRepository.UpdateAsync(existing);
@@ -201,7 +197,14 @@ public class ReceiptService : IReceiptService
     }
     public async Task<IReadOnlyList<ReceiptReadDto>> GetAllReceiptsForUserAsync(int userId)
     {
-        throw new NotImplementedException();
+        var allReceipts = await _receiptRepository.GetAllByUserAsync(userId);
+
+        if (allReceipts == null || allReceipts.Count == 0)
+            return Array.Empty<ReceiptReadDto>();
+
+        var mappedReceipts = _mapper.Map<IReadOnlyList<ReceiptReadDto>>(allReceipts);
+
+        return mappedReceipts;
     }
     public async Task<ReceiptReadDto> FindByIdAsync(int id)
     {
