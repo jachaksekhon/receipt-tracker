@@ -6,9 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ReceiptTracker.API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class ReceiptController : Controller
+public class ReceiptController : BaseApiController
 {
     private readonly IReceiptService _receiptService;
 

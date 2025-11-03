@@ -38,4 +38,6 @@ public static class ErrorMessages
     // System / Generic
     public const string UnexpectedError = "An unexpected error occurred. Please try again later.";
     public const string ErrorConfirmingReceipt = "An unexpected error occurred while confirming the receipt.";
+
+    public const string UserIdMissingFromJtw = "User ID claim missing from JWT.";
 }

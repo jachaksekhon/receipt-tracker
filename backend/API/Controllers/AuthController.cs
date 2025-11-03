@@ -23,7 +23,6 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<UserReadDto>> Register([FromBody] UserRegisterDto request)
     {
-
         try
         {
             UserReadDto user = await _authService.RegisterAsync(request);
@@ -40,9 +39,6 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<object>> Login([FromBody] UserLoginDto request)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         try
         {
             var token = await _authService.LoginAsync(request);
