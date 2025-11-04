@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ReceiptTracker.Application.Constants;
 using ReceiptTracker.Application.DTOs.Auth;
 using ReceiptTracker.Application.DTOs.Users;
 using ReceiptTracker.Application.Services.Auth;
+using System.Security.Claims;
 
 namespace ReceiptTracker.API.Controllers;
 
@@ -94,24 +96,5 @@ public class AuthController : ControllerBase
         {
             return BadRequest(new { message = ex.Message });
         }
-    }
-
-    [HttpGet("me")]
-    [Authorize]
-    public ActionResult<object> GetCurrentUser()
-    {
-        var userId   = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var email    = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Email)?.Value;
-        var fullName = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value;
-
-        if (userId == null)
-            return Unauthorized();
-
-        return Ok(new
-        {
-            Id = userId,
-            FullName = fullName,
-            Email = email
-        });
     }
 }

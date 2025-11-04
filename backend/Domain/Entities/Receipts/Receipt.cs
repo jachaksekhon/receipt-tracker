@@ -24,6 +24,8 @@ public class Receipt
     [Required]
     public string StoreName { get; set; } = string.Empty;
 
+    public string? ReceiptName { get; set; }
+
     public DateTime PurchaseDate { get; set; } = DateTime.UtcNow;
 
     [Column(TypeName = "decimal(10,2)")]
