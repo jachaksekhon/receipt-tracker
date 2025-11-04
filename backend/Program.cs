@@ -67,10 +67,11 @@ builder.Services.AddCors(options =>
 // Authentication setup will come soon (JWT)
 var app = builder.Build();
 
+app.UseCors();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors();
 app.UseStaticFiles();
 app.MapControllers();
 app.Run();
