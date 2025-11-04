@@ -6,6 +6,7 @@ public class ReceiptDashboardDto
     public string? ReceiptName { get; set; }
     public DateTime PurchaseDate { get; set; }
     public decimal TotalSaved { get; set; } = 0;
+    public int TotalNumberOfItems { get; set; }
     public int OnSaleItems { get; set; } = 0;
 
 }
