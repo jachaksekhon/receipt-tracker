@@ -7,6 +7,7 @@ public class ReceiptCreateDto
 {
     [Required]
     public string StoreName { get; set; } = string.Empty;
+    public string? ReceiptName { get; set; }
 
     [Required]
     public DateTime PurchaseDate { get; set; }

@@ -16,7 +16,7 @@ public class ReceiptController : BaseApiController
     }
 
     [HttpGet("{receiptId}")]
-    public async Task<ActionResult<ReceiptReadDto>> GetReceiptById(int receiptId)
+    public async Task<ActionResult<ReceiptViewDto>> GetReceiptById(int receiptId)
     {
         try
         {

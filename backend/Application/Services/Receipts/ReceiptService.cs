@@ -204,14 +204,14 @@ public class ReceiptService : IReceiptService
 
         return mappedReceipts;
     }
-    public async Task<ReceiptReadDto> FindByIdAsync(int receiptId, int userId)
+    public async Task<ReceiptViewDto> FindByIdAsync(int receiptId, int userId)
     {
         var found = await _receiptRepository.FindByIdAsync(receiptId, userId);
 
         if (found == null)
             throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
 
-        var receiptDto = _mapper.Map<ReceiptReadDto>(found);
+        var receiptDto = _mapper.Map<ReceiptViewDto>(found);
 
         return receiptDto;
     }

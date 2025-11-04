@@ -6,6 +6,7 @@ namespace ReceiptTracker.Application.DTOs.Receipts;
 public class ReceiptReadDto
 {
     public int Id { get; set; }
+    public string? ReceiptName { get; set; }
     public string StoreName { get; set; } = string.Empty;
     public DateTime PurchaseDate { get; set; }
     public decimal TotalAmount { get; set; }
