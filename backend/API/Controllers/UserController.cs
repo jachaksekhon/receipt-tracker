@@ -24,6 +24,9 @@ public class UserController : BaseApiController
     public async Task<ActionResult<UserReadDto>> GetCurrentUser()
     {
         int userId = GetCurrentUserId();
+
+        Console.WriteLine($"[GetReceiptById] UserId = {userId}");
+
         var user = await _userService.FindByIdAsync(userId);
 
         if (user == null)

@@ -17,6 +17,7 @@ public class MappingProfile : Profile
         CreateMap<UserCreateDto, User>();
 
         CreateMap<Receipt, ReceiptReadDto>();
+        CreateMap<Receipt, ReceiptViewDto>();
         CreateMap<ReceiptItem, ReceiptItemReadDto>();
         CreateMap<ReceiptItemCreateDto, ReceiptItem>();
         CreateMap<Receipt, ReceiptDashboardDto>();

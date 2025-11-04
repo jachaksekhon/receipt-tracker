@@ -1,0 +1,14 @@
+# Environment variables
+.env
+node_modules/
+config/prompts/*.txt
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+bin/
+obj/

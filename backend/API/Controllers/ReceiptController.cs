@@ -23,6 +23,10 @@ public class ReceiptController : BaseApiController
             int userId = GetCurrentUserId();
 
             var receipt = await _receiptService.FindByIdAsync(receiptId, userId);
+
+            if (receipt == null)
+                return NotFound(ErrorMessages.ReceiptNotFound(receiptId));
+
             return Ok(receipt);
         }
         catch (FileNotFoundException ex)
@@ -128,7 +132,7 @@ public class ReceiptController : BaseApiController
         }
     }
 
-    [HttpGet]
+    [HttpGet("all")]
     public async Task<ActionResult<IReadOnlyList<ReceiptDashboardDto>>> GetAllReceiptsForUser()
     {
         try
