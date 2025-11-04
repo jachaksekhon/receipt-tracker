@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -27,7 +28,7 @@ export default function LoginPage() {
       const response = await loginUser(email.trim(), password);
 
       if (!response.success) throw new Error(response.message);
-      router.push("/dashboard");
+      router.push("/me");
     } catch (err: any) {
       setError(err.message || "Login failed.");
     } finally {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { apiFetch } from "./api_client";
 
 export interface RegisterPayload {
