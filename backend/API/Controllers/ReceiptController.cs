@@ -129,7 +129,7 @@ public class ReceiptController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<ReceiptReadDto>>> GetAllReceiptsForUser()
+    public async Task<ActionResult<IReadOnlyList<ReceiptDashboardDto>>> GetAllReceiptsForUser()
     {
         try
         {

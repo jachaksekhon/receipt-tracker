@@ -9,7 +9,7 @@ public interface IReceiptService
     Task<ReceiptReadDto> ProcessReceiptAsync(int receiptId, int userId);
     Task<ReceiptReadDto> GetReceiptPreviewAsync(int receiptId, int userId);
     Task<ReceiptReadDto> ConfirmReceiptAsync(int receiptId, int userId, ReceiptConfirmDto receiptConfirmDto);
-    Task<IReadOnlyList<ReceiptReadDto>> GetAllReceiptsForUserAsync(int userId);
+    Task<IReadOnlyList<ReceiptDashboardDto>> GetAllReceiptsForUserAsync(int userId);
     Task<ReceiptReadDto> FindByIdAsync(int receiptId, int userId);
     Task<bool> DeleteAsync(int receiptId, int userId);
 }

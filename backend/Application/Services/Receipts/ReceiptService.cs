@@ -48,7 +48,6 @@ public class ReceiptService : IReceiptService
         }
         catch (IOException ex)
         {
-            // File system issue (e.g., permission denied)
             throw new Exception(ErrorMessages.FailedToUploadFileToServer, ex);
         }
 
@@ -83,7 +82,6 @@ public class ReceiptService : IReceiptService
     {
         try
         {
-
             var existing = await _receiptRepository.FindByIdAsync(receiptId, userId)
                 ?? throw new FileNotFoundException(ErrorMessages.ReceiptNotFound(receiptId));
 
@@ -195,14 +193,14 @@ public class ReceiptService : IReceiptService
         var resultDto = _mapper.Map<ReceiptReadDto>(existing);
         return resultDto;
     }
-    public async Task<IReadOnlyList<ReceiptReadDto>> GetAllReceiptsForUserAsync(int userId)
+    public async Task<IReadOnlyList<ReceiptDashboardDto>> GetAllReceiptsForUserAsync(int userId)
     {
         var allReceipts = await _receiptRepository.GetAllByUserAsync(userId);
 
         if (allReceipts == null || allReceipts.Count == 0)
-            return Array.Empty<ReceiptReadDto>();
+            return Array.Empty<ReceiptDashboardDto>();
 
-        var mappedReceipts = _mapper.Map<IReadOnlyList<ReceiptReadDto>>(allReceipts);
+        var mappedReceipts = _mapper.Map<IReadOnlyList<ReceiptDashboardDto>>(allReceipts);
 
         return mappedReceipts;
     }
