@@ -159,7 +159,7 @@ public class ReceiptController : BaseApiController
             if (!success)
                 return NotFound(ErrorMessages.ReceiptNotFound(receiptId));
 
-            return Ok(Strings.ReceiptDeleteSuccess);
+            return Ok(new { message = Strings.ReceiptDeleteSuccess });
         }
         catch (FileNotFoundException ex)
         {
