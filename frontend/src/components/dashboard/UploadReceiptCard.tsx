@@ -8,13 +8,19 @@ import { UploadCloud } from "lucide-react";
 
 interface Props {
   onUploaded?: (file: File) => Promise<void> | void;
+  onProcessed?: (receiptId: number) => void;
 }
 
-export default function UploadReceiptCard({ onUploaded }: Props) {
+import { uploadReceipt, processReceipt } from "@/lib/services/receiptService";
+
+export default function UploadReceiptCard({ onUploaded, onProcessed }: Props) {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const [uploadedReceiptId, setUploadedReceiptId] = useState<number | null>(null);
 
   function onPickFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] || null;
@@ -31,12 +37,35 @@ export default function UploadReceiptCard({ onUploaded }: Props) {
 
   async function handleUpload() {
     if (!file) return;
-    await onUploaded?.(file);
-    setConfirmOpen(false);
-    setUploadOpen(false);
-    setFile(null);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPreviewUrl(null);
+    setUploading(true);
+    try {
+      await onUploaded?.(file);
+      const resp = await uploadReceipt(file);
+      setUploadedReceiptId(resp.receiptId);
+      setConfirmOpen(true);
+    } catch (e: any) {
+      alert(e.message || "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleProcess() {
+    if (uploadedReceiptId == null) return;
+    setProcessing(true);
+    try {
+      await processReceipt(uploadedReceiptId);
+      onProcessed?.(uploadedReceiptId);
+      setConfirmOpen(false);
+      setUploadOpen(false);
+      setFile(null);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    } catch (e: any) {
+      alert(e.message || "Failed to start processing");
+    } finally {
+      setProcessing(false);
+    }
   }
 
   return (
@@ -90,8 +119,8 @@ export default function UploadReceiptCard({ onUploaded }: Props) {
               <Button variant="outline" type="button" onClick={() => setUploadOpen(false)}>
                 Cancel
               </Button>
-              <Button type="button" disabled={!file} onClick={() => setConfirmOpen(true)}>
-                Upload
+              <Button type="button" disabled={!file || uploading} onClick={handleUpload}>
+                {uploading ? "Uploading..." : "Upload"}
               </Button>
             </div>
           </div>
@@ -111,8 +140,8 @@ export default function UploadReceiptCard({ onUploaded }: Props) {
               <Button variant="outline" type="button" onClick={() => setConfirmOpen(false)}>
                 Back
               </Button>
-              <Button type="button" onClick={() => void handleUpload()}>
-                Continue
+              <Button type="button" onClick={() => void handleProcess()} disabled={processing}>
+                {processing ? "Processing..." : "Continue"}
               </Button>
             </div>
           </div>
@@ -121,4 +150,3 @@ export default function UploadReceiptCard({ onUploaded }: Props) {
     </>
   );
 }
-

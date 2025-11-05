@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import ProfileHeaderCard from "@/components/dashboard/ProfileHeaderCard";
 import StatsCards from "@/components/dashboard/StatsCards";
 import UploadReceiptCard from "@/components/dashboard/UploadReceiptCard";
@@ -31,6 +32,8 @@ function formatCurrency(n: number) {
 }
 
 export default function UserDashboardPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [receipts, setReceipts] = useState<ReceiptDashboard[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +66,37 @@ export default function UserDashboardPage() {
       }
     }
     fetchData();
+  }, []);
+
+  // Helper to refresh receipts on demand
+  async function refreshReceipts() {
+    try {
+      const data = await getUserReceipts();
+      setReceipts(data);
+    } catch (e) {
+      // ignore for passive refresh
+    }
+  }
+
+  // When returning with ?refresh=1, re-fetch receipts
+  useEffect(() => {
+    if (searchParams?.get("refresh")) {
+      void refreshReceipts();
+    }
+  }, [searchParams]);
+
+  // Also refresh when tab regains focus
+  useEffect(() => {
+    const onFocus = () => void refreshReceipts();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") void refreshReceipts();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   const totalSavedAllTime = useMemo(
@@ -168,7 +202,7 @@ export default function UserDashboardPage() {
 
       <StatsCards totalReceipts={totalReceipts} totalSaved={totalSavedAllTime} />
 
-      <UploadReceiptCard onUploaded={async () => { /* wire to API and refresh */ }} />
+        <UploadReceiptCard onProcessed={(id) => router.push(`/receipts/${id}/confirm`)} />
 
       <ReceiptsTableCard
         receipts={receipts}

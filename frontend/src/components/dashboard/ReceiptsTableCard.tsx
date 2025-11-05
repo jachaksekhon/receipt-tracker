@@ -17,7 +17,7 @@ interface Props {
 
 export default function ReceiptsTableCard({ receipts, onView, onEdit, onDelete }: Props) {
   const [expanded, setExpanded] = useState(false);
-  const [sortKey, setSortKey] = useState<"date" | "saved" | null>(null);
+  const [sortKey, setSortKey] = useState<"date" | "saved" | "added" | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   const sortedReceipts = useMemo(() => {
@@ -32,6 +32,11 @@ export default function ReceiptsTableCard({ receipts, onView, onEdit, onDelete }
       } else if (sortKey === "saved") {
         av = a.totalSaved ?? 0;
         bv = b.totalSaved ?? 0;
+      } else if (sortKey === "added") {
+        const ad = a.createdAt || a.purchaseDate;
+        const bd = b.createdAt || b.purchaseDate;
+        av = new Date(ad).getTime();
+        bv = new Date(bd).getTime();
       }
       const cmp = av === bv ? 0 : av < bv ? -1 : 1;
       return sortDir === "asc" ? cmp : -cmp;
@@ -39,7 +44,7 @@ export default function ReceiptsTableCard({ receipts, onView, onEdit, onDelete }
     return arr;
   }, [receipts, sortKey, sortDir]);
 
-  function toggleSort(key: "date" | "saved") {
+  function toggleSort(key: "date" | "saved" | "added") {
     if (sortKey !== key) {
       setSortKey(key);
       setSortDir("desc");
@@ -80,6 +85,19 @@ export default function ReceiptsTableCard({ receipts, onView, onEdit, onDelete }
                       {sortKey === "date" ? (sortDir === "asc" ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ArrowUpDown className="h-4 w-4" />}
                     </Button>
                   </th>
+                  <th className="p-3 font-medium border-b">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="inline-flex items-center gap-1 px-0 h-auto hover:text-foreground"
+                      onClick={() => toggleSort("added")}
+                      aria-sort={sortKey === "added" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+                    >
+                      Date added
+                      {sortKey === "added" ? (sortDir === "asc" ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />) : <ArrowUpDown className="h-4 w-4" />}
+                    </Button>
+                  </th>
                   <th className="p-3 font-medium border-b text-center">Items</th>
                   <th className="p-3 font-medium border-b text-center">On sale</th>
                   <th className="p-3 font-medium border-b">
@@ -113,6 +131,7 @@ export default function ReceiptsTableCard({ receipts, onView, onEdit, onDelete }
                       </Button>
                     </td>
                     <td className="p-3 whitespace-nowrap">{new Date(r.purchaseDate).toLocaleDateString()}</td>
+                    <td className="p-3 whitespace-nowrap">{new Date(r.createdAt || r.purchaseDate).toLocaleDateString()}</td>
                     <td className="p-3 text-center">{r.totalNumberOfItems}</td>
                     <td className="p-3 text-center">{r.onSaleItems}</td>
                     <td className="p-3">{formatCurrency(r.totalSaved)}</td>
@@ -136,4 +155,3 @@ export default function ReceiptsTableCard({ receipts, onView, onEdit, onDelete }
     </Card>
   );
 }
-
