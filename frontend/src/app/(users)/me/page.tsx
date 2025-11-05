@@ -7,29 +7,9 @@ import StatsCards from "@/components/dashboard/StatsCards";
 import UploadReceiptCard from "@/components/dashboard/UploadReceiptCard";
 import ReceiptsTableCard from "@/components/dashboard/ReceiptsTableCard";
 import { getCurrentUser, UserProfile } from "@/lib/services/userService";
-import {
-  getUserReceipts,
-  deleteReceipt,
-  ReceiptDashboard,
-  ReceiptView,
-} from "@/lib/services/receiptService";
+import { getUserReceipts, deleteReceipt, ReceiptDashboard } from "@/lib/services/receiptService";
 import ReceiptViewModal from "@/components/receipt/ReceiptViewModal";
-import ReceiptEditModal from "@/components/receipt/ReceiptEditModal";
-
-
-function initials(first?: string, last?: string) {
-  const a = (first || "").trim()[0] || "";
-  const b = (last || "").trim()[0] || "";
-  return (a + b).toUpperCase() || "?";
-}
-
-function formatCurrency(n: number) {
-  return new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 2,
-  }).format(n ?? 0);
-}
+// Edit now routes to the confirm page; no separate edit modal
 
 export default function UserDashboardPage() {
   const router = useRouter();
@@ -38,17 +18,9 @@ export default function UserDashboardPage() {
   const [receipts, setReceipts] = useState<ReceiptDashboard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
+  // No local edit modal state; editing routes to confirm page
   const [activeId, setActiveId] = useState<number | null>(null);
-  const [activeLoading, setActiveLoading] = useState(false);
-  const [sortKey, setSortKey] = useState<"date" | "saved" | null>(null);
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [uploadOpen, setUploadOpen] = useState(false);
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [confirmUploadOpen, setConfirmUploadOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -106,56 +78,7 @@ export default function UserDashboardPage() {
 
   const totalReceipts = receipts.length;
 
-  const sortedReceipts = useMemo(() => {
-    if (!sortKey) return receipts;
-    const arr = receipts.slice();
-    arr.sort((a, b) => {
-      let av = 0;
-      let bv = 0;
-      if (sortKey === "date") {
-        av = new Date(a.purchaseDate).getTime();
-        bv = new Date(b.purchaseDate).getTime();
-      } else if (sortKey === "saved") {
-        av = a.totalSaved ?? 0;
-        bv = b.totalSaved ?? 0;
-      }
-      const cmp = av === bv ? 0 : av < bv ? -1 : 1;
-      return sortDir === "asc" ? cmp : -cmp;
-    });
-    return arr;
-  }, [receipts, sortKey, sortDir]);
-
-  function toggleSort(key: "date" | "saved") {
-    if (sortKey !== key) {
-      setSortKey(key);
-      setSortDir("desc");
-    } else {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    }
-  }
-
-  function onPickFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0] || null;
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setUploadFile(f);
-    setPreviewUrl(f ? URL.createObjectURL(f) : null);
-  }
-
-  useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
-
-  async function handleUpload() {
-    if (!uploadFile) return;
-    // TODO: Wire to your backend endpoint.
-    console.log("Uploading", uploadFile.name);
-    setUploadOpen(false);
-    setUploadFile(null);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPreviewUrl(null);
-  }
+  // Sorting/upload helpers are encapsulated in child components
 
   async function handleDelete(id: number) {
     const row = receipts.find((r) => r.id === id);
@@ -176,24 +99,16 @@ export default function UserDashboardPage() {
   }
 
   function openEdit(id: number) {
-    setActiveId(id);
-    setEditOpen(true);
+    router.push(`/receipts/${id}/confirm`);
   }
 
-  function handleSaved(updated: ReceiptView) {
-    setReceipts((prev) =>
-      prev.map((r) => (r.id === updated.id ? { ...r, receiptName: updated.receiptName } : r))
-    );
-  }
+  // Edits happen on confirm page; no local patching needed
 
   if (loading)
     return <p className="text-center mt-8 text-sm text-muted-foreground">Loading dashboard...</p>;
   if (error)
     return <p className="text-center mt-8 text-sm text-destructive">{error}</p>;
   if (!user) return null;
-
-  const joined = new Date(user.createdAt).toLocaleDateString();
-  const name = `${user.firstName} ${user.lastName}`.trim();
 
   return (
     <div className="w-full flex justify-center">
@@ -213,12 +128,7 @@ export default function UserDashboardPage() {
       </div>
 
       <ReceiptViewModal open={viewOpen} receiptId={activeId} onClose={() => setViewOpen(false)} />
-      <ReceiptEditModal
-        open={editOpen}
-        receiptId={activeId}
-        onClose={() => setEditOpen(false)}
-        onSaved={handleSaved}
-      />
+      {/* Editing is handled on /receipts/[id]/confirm */}
 
       
     </div>
