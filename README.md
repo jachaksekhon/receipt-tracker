@@ -12,7 +12,7 @@ Especially in todays economy, every dollar counts. Saving money is making money!
 
 - [x] **User Authentication**  – Secure signup/login with JWT.
 - [x] **Receipt Upload and Processing**  – Upload, process and store receipts in a database.
-- [x] **Receipt Parsing (OCR) ** – Automatically extract products, store and date from uploaded receipts using OpenAI API
+- [x] **Receipt Parsing (OCR)** – Automatically extract products, store and date from uploaded receipts using OpenAI API
 - [ ] **Price Drop Detection** – Match receipts against weekly flyers for discounts.
 - [ ] **User Notifications**   – Alert users when purchased items go on sale.
 - [ ] **Deploy application for public use** 
