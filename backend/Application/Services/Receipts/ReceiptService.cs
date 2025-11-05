@@ -164,6 +164,7 @@ public class ReceiptService : IReceiptService
         ?? throw new Exception(ErrorMessages.ReceiptNotFound(receiptId));
 
         existing.StoreName = receiptConfirmDto.StoreName;
+        existing.ReceiptName = receiptConfirmDto.ReceiptName;
         existing.PurchaseDate = DateTime.SpecifyKind(receiptConfirmDto.PurchaseDate, DateTimeKind.Utc);
         existing.TotalAmount = receiptConfirmDto.TotalAmount;
         existing.TotalNumberOfItems = receiptConfirmDto.Items.Count;

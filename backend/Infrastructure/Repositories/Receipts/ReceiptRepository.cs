@@ -59,10 +59,10 @@ public class ReceiptRepository : IReceiptRepository
             return null;
 
         existing.StoreName = receipt.StoreName;
+        existing.ReceiptName = receipt.ReceiptName;
         existing.PurchaseDate = receipt.PurchaseDate;
         existing.TotalAmount = receipt.TotalAmount;
         existing.Notes = receipt.Notes;
-
         existing.Items = receipt.Items;
 
         await _context.SaveChangesAsync();

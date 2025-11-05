@@ -8,5 +8,6 @@ public class ReceiptDashboardDto
     public decimal TotalSaved { get; set; } = 0;
     public int TotalNumberOfItems { get; set; }
     public int OnSaleItems { get; set; } = 0;
+    public DateTime CreatedAt { get; set; }
 
 }

@@ -35,6 +35,7 @@ public class Receipt
     public string ImageUrl { get; set; } = string.Empty;
     public ReceiptStatus Status { get; set; }
     public string? Notes { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public User? User { get; set; }
 
     public List<ReceiptItem> Items { get; set; } = new();
