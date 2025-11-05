@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Modal from "@/components/ui/modal";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import { getReceiptById, ReceiptView } from "@/lib/services/receiptService";
 
 function formatCurrency(n: number) {
@@ -46,66 +47,75 @@ export default function ReceiptViewModal({ open, receiptId, onClose }: Props) {
 
   return (
     <Modal open={open} onClose={onClose} containerClassName="w-full max-w-4xl mx-auto">
-      <CardHeader className="flex-row items-center justify-between">
-        <CardTitle>Receipt details</CardTitle>
-        <Button variant="outline" size="sm" onClick={onClose}>
-          Close
+      <div className="relative">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={onClose}
+          className="absolute top-2 right-2"
+          aria-label="Close"
+          title="Close"
+        >
+          <X className="h-4 w-4" />
         </Button>
-      </CardHeader>
-      <CardContent>
-        {loading || !data ? (
-          <p className="text-sm text-muted-foreground">Loading receipt…</p>
-        ) : (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-              <div>
-                <span className="text-muted-foreground">Name:</span> {data.receiptName ?? `Receipt ${data.id}`}
-              </div>
-              <div>
-                <span className="text-muted-foreground">Store:</span> {data.storeName}
-              </div>
-              <div>
-                <span className="text-muted-foreground">Purchased:</span> {new Date(data.purchaseDate).toLocaleString()}
-              </div>
-              <div>
-                <span className="text-muted-foreground">Total:</span> {formatCurrency(data.totalAmount)}
-              </div>
-              {data.notes && (
-                <div className="sm:col-span-2">
-                  <span className="text-muted-foreground">Notes:</span> {data.notes}
+        <CardHeader className="pb-2 pr-8">
+          <CardTitle>Receipt details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading || !data ? (
+            <p className="text-sm text-muted-foreground">Loading receipt...</p>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Name:</span> {data.receiptName ?? `Receipt ${data.id}`}
                 </div>
-              )}
-            </div>
+                <div>
+                  <span className="text-muted-foreground">Store:</span> {data.storeName}
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Purchased:</span> {new Date(data.purchaseDate).toLocaleString()}
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Total:</span> {formatCurrency(data.totalAmount)}
+                </div>
+                {data.notes && (
+                  <div className="sm:col-span-2">
+                    <span className="text-muted-foreground">Notes:</span> {data.notes}
+                  </div>
+                )}
+              </div>
 
-            <div className="overflow-x-auto max-h-[60vh] overflow-y-auto rounded-md">
-              <table className="w-full border-separate border-spacing-0 text-sm">
-                <thead className="sticky top-0 bg-background z-10">
-                  <tr className="text-left text-muted-foreground">
-                    <th className="p-3 font-medium border-b">Item</th>
-                    <th className="p-3 font-medium border-b">Qty</th>
-                    <th className="p-3 font-medium border-b">Original</th>
-                    <th className="p-3 font-medium border-b">Discount</th>
-                    <th className="p-3 font-medium border-b">Final</th>
-                    <th className="p-3 font-medium border-b">Category</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.items.map((it) => (
-                    <tr key={it.id} className="border-b hover:bg-muted/40 transition-colors">
-                      <td className="p-3 font-medium">{it.itemName}</td>
-                      <td className="p-3">{it.quantity}</td>
-                      <td className="p-3">{formatCurrency(it.originalPrice)}</td>
-                      <td className="p-3">{formatCurrency(it.discountAmount)}</td>
-                      <td className="p-3">{formatCurrency(it.finalPrice)}</td>
-                      <td className="p-3">{it.category ?? "—"}</td>
+              <div className="overflow-x-auto max-h-[60vh] overflow-y-auto rounded-md">
+                <table className="w-full border-separate border-spacing-0 text-sm">
+                  <thead className="sticky top-0 bg-background z-10">
+                    <tr className="text-left text-muted-foreground">
+                      <th className="p-3 font-medium border-b">Product SKU</th>
+                      <th className="p-3 font-medium border-b">Item</th>
+                      <th className="p-3 font-medium border-b text-right">Qty</th>
+                      <th className="p-3 font-medium border-b text-right">Original</th>
+                      <th className="p-3 font-medium border-b text-right">Discount</th>
+                      <th className="p-3 font-medium border-b text-right">Final</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {data.items.map((it) => (
+                      <tr key={it.id} className="border-b hover:bg-muted/40 transition-colors">
+                        <td className="p-3">{it.productSku ?? "-"}</td>
+                        <td className="p-3 font-medium">{it.itemName}</td>
+                        <td className="p-3 text-right">{it.quantity}</td>
+                        <td className="p-3 text-right">{formatCurrency(it.originalPrice)}</td>
+                        <td className="p-3 text-right">{formatCurrency(it.discountAmount)}</td>
+                        <td className="p-3 text-right">{formatCurrency(it.finalPrice)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        )}
-      </CardContent>
+          )}
+        </CardContent>
+      </div>
     </Modal>
   );
 }

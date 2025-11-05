@@ -1,33 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import ProfileHeaderCard from "@/components/dashboard/ProfileHeaderCard";
+import StatsCards from "@/components/dashboard/StatsCards";
+import UploadReceiptCard from "@/components/dashboard/UploadReceiptCard";
+import ReceiptsTableCard from "@/components/dashboard/ReceiptsTableCard";
 import { getCurrentUser, UserProfile } from "@/lib/services/userService";
 import {
   getUserReceipts,
   deleteReceipt,
-  getReceiptById,
-  updateReceipt,
   ReceiptDashboard,
   ReceiptView,
 } from "@/lib/services/receiptService";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import ReceiptViewModal from "@/components/receipt/ReceiptViewModal";
 import ReceiptEditModal from "@/components/receipt/ReceiptEditModal";
-import {
-  ArrowUpRight,
-  DollarSign,
-  Pencil,
-  Trash2,
-  User as UserIcon,
-} from "lucide-react";
+
 
 function initials(first?: string, last?: string) {
   const a = (first || "").trim()[0] || "";
@@ -53,6 +40,12 @@ export default function UserDashboardPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [activeId, setActiveId] = useState<number | null>(null);
   const [activeLoading, setActiveLoading] = useState(false);
+  const [sortKey, setSortKey] = useState<"date" | "saved" | null>(null);
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [confirmUploadOpen, setConfirmUploadOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -78,6 +71,57 @@ export default function UserDashboardPage() {
   );
 
   const totalReceipts = receipts.length;
+
+  const sortedReceipts = useMemo(() => {
+    if (!sortKey) return receipts;
+    const arr = receipts.slice();
+    arr.sort((a, b) => {
+      let av = 0;
+      let bv = 0;
+      if (sortKey === "date") {
+        av = new Date(a.purchaseDate).getTime();
+        bv = new Date(b.purchaseDate).getTime();
+      } else if (sortKey === "saved") {
+        av = a.totalSaved ?? 0;
+        bv = b.totalSaved ?? 0;
+      }
+      const cmp = av === bv ? 0 : av < bv ? -1 : 1;
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+    return arr;
+  }, [receipts, sortKey, sortDir]);
+
+  function toggleSort(key: "date" | "saved") {
+    if (sortKey !== key) {
+      setSortKey(key);
+      setSortDir("desc");
+    } else {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    }
+  }
+
+  function onPickFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0] || null;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setUploadFile(f);
+    setPreviewUrl(f ? URL.createObjectURL(f) : null);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  async function handleUpload() {
+    if (!uploadFile) return;
+    // TODO: Wire to your backend endpoint.
+    console.log("Uploading", uploadFile.name);
+    setUploadOpen(false);
+    setUploadFile(null);
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+  }
 
   async function handleDelete(id: number) {
     const row = receipts.find((r) => r.id === id);
@@ -120,127 +164,18 @@ export default function UserDashboardPage() {
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-6xl px-4 md:px-6 space-y-6">
-      {/* Header: profile pic + welcome */}
-      <Card className="overflow-hidden">
-        <CardContent className="p-6">
-          <div className="flex items-center gap-4">
-            {/* Avatar */}
-            <div className="size-16 rounded-full bg-muted/80 flex items-center justify-center text-lg font-semibold text-foreground/80">
-              {user.firstName || user.lastName ? (
-                <span>{initials(user.firstName, user.lastName)}</span>
-              ) : (
-                <UserIcon className="h-7 w-7" />
-              )}
-            </div>
-            {/* Text block */}
-            <div>
-              <div className="text-xl font-semibold">Welcome, {user.firstName || name || "Friend"}</div>
-              <div className="text-sm text-muted-foreground">{user.email}</div>
-              <div className="text-xs text-muted-foreground">Joined {joined}</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <ProfileHeaderCard user={user} />
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-sm text-muted-foreground mb-2">Total receipts</div>
-            <div className="text-3xl font-semibold">{totalReceipts}</div>
-            <div className="mt-3 text-xs text-muted-foreground">Another useful stat could go here.</div>
-          </CardContent>
-        </Card>
+      <StatsCards totalReceipts={totalReceipts} totalSaved={totalSavedAllTime} />
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">Total saved since joining</div>
-              <ArrowUpRight className="h-4 w-4 text-emerald-600" />
-            </div>
-            <div className="mt-1 flex items-center gap-2">
-              <DollarSign className="h-7 w-7 text-emerald-600" />
-              <div className="text-3xl font-semibold">{formatCurrency(totalSavedAllTime)}</div>
-            </div>
-            <div className="mt-3 text-xs text-muted-foreground">Great savings — keep it up!</div>
-          </CardContent>
-        </Card>
-      </div>
+      <UploadReceiptCard onUploaded={async () => { /* wire to API and refresh */ }} />
 
-      {/* Receipts table */}
-      <Card>
-        <CardHeader className="pb-3 flex items-center justify-between">
-          <CardTitle>Your receipts</CardTitle>
-          {receipts.length > 6 && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setExpanded((v) => !v)}
-            >
-              {expanded ? "Collapse" : "Expand"}
-            </Button>
-          )}
-        </CardHeader>
-        <CardContent>
-          {receipts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No receipts found.</p>
-          ) : (
-            <div className={expanded ? "overflow-x-auto" : "overflow-x-auto max-h-96 overflow-y-auto rounded-md"}>
-              <table className="w-full border-separate border-spacing-0 text-sm">
-                <thead className="sticky top-0 bg-background z-10">
-                  <tr className="text-left text-muted-foreground">
-                    <th className="sticky left-0 bg-background p-3 font-medium border-b z-20">Receipt</th>
-                    <th className="p-3 font-medium border-b">Date of purchase</th>
-                    <th className="p-3 font-medium border-b text-center">Items</th>
-                    <th className="p-3 font-medium border-b text-center">On sale</th>
-                    <th className="p-3 font-medium border-b">Saved</th>
-                    <th className="p-3 font-medium border-b text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {receipts.map((r, idx) => (
-                    <tr
-                      key={r.id}
-                      className="group border-b hover:bg-muted/40 transition-colors"
-                    >
-                      <td className="p-3 font-medium">
-                        <button
-                          type="button"
-                          onClick={() => openView(r.id)}
-                          className="hover:underline text-left"
-                        >
-                          {r.receiptName ?? `Receipt ${r.id}`}
-                        </button>
-                      </td>
-                      <td className="p-3 whitespace-nowrap">
-                        {new Date(r.purchaseDate).toLocaleDateString()}
-                      </td>
-                      <td className="p-3 text-center">{r.totalNumberOfItems}</td>
-                      <td className="p-3 text-center">{r.onSaleItems}</td>
-                      <td className="p-3">{formatCurrency(r.totalSaved)}</td>
-                      <td className="p-3 text-center">
-                        <div className="flex justify-center items-center gap-2 opacity-80 group-hover:opacity-100">
-                          <Button size="sm" variant="outline" className="h-8" onClick={() => openEdit(r.id)}>
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            className="h-8"
-                            onClick={() => handleDelete(r.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <ReceiptsTableCard
+        receipts={receipts}
+        onView={openView}
+        onEdit={openEdit}
+        onDelete={handleDelete}
+      />
       </div>
 
       <ReceiptViewModal open={viewOpen} receiptId={activeId} onClose={() => setViewOpen(false)} />
@@ -250,6 +185,10 @@ export default function UserDashboardPage() {
         onClose={() => setEditOpen(false)}
         onSaved={handleSaved}
       />
+
+      
     </div>
   );
 }
+
+
