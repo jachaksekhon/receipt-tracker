@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ReceiptTracker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9c404d7ac8d2e51fd1f29389e3315b2cfe953d4a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+923e7dc213fcb12822d01b56a93ff0a6e272b2ce")]
 [assembly: System.Reflection.AssemblyProductAttribute("ReceiptTracker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ReceiptTracker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
